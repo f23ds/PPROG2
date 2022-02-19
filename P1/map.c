@@ -5,15 +5,15 @@
 #include "point.h"
 #include "types.h"
 
-#define MAX_NCOLS 64  // Maximum map cols
-#define MAX_NROWS 64  // Maximum map rows
-#define MAX_BUFFER 64 // Maximum file line size
+#define MAX_NCOLS 64  /* Maximum map cols*/
+#define MAX_NROWS 64  /* Maximum map rows*/
+#define MAX_BUFFER 64 /* Maximum file line size*/
 
 struct _Map
 {
     unsigned int nrows, ncols;
-    Point *array[MAX_NROWS][MAX_NCOLS]; // array with the Map points
-    Point *input, *output;              // points input/output
+    Point *array[MAX_NROWS][MAX_NCOLS]; /* array with the Map points*/
+    Point *input, *output;              /* points input/output*/
 };
 
 struct _Point
@@ -32,7 +32,7 @@ Map *map_new(unsigned int nrows, unsigned int ncols)
         return NULL;
     }
 
-    // Reservamos memoria para el mapa
+    /* Reservamos memoria para el mapa*/
     map = (Map *)calloc(1, sizeof(Map));
 
     map->nrows = nrows;
@@ -53,7 +53,7 @@ Point *map_insertPoint(Map *mp, Point *p)
         return NULL;
     }
 
-    // Insertamos el punto en el mapa a partir de sus coordenadas
+    /* Insertamos el punto en el mapa a partir de sus coordenadas*/
     mp->array[p->y][p->x] = p;
 
     return mp->array[p->y][p->x];
@@ -106,7 +106,7 @@ Point *map_getPoint(const Map *mp, const Point *p)
         return NULL;
     }
 
-    // Return el punto con las mismas coordenadas que p
+    /* Return el punto con las mismas coordenadas que p*/
     return mp->array[p->y][p->x];
 }
 
@@ -117,7 +117,7 @@ Point *map_getNeighbor(const Map *mp, const Point *p, Position pos)
         return NULL;
     }
 
-    // Hacemos return del vecino según la posición
+    /* Hacemos return del vecino según la posición*/
     switch (pos)
     {
     case RIGHT:
@@ -192,7 +192,8 @@ Bool map_equal(const void *_mp1, const void *_mp2)
     ncols1 = map_getNcols(_mp1);
     ncols2 = map_getNcols(_mp2);
 
-    // Si el número de filas y columnas no es idéntico, entonces los mapas no son iguales
+    /* Si el número de filas y columnas no es idéntico, entonces los mapas no son iguales*/
+    
     if (nrows1 != nrows2 || ncols1 != ncols2)
     {
         return FALSE;
