@@ -243,7 +243,7 @@ Bool map_equal(const void *_mp1, const void *_mp2)
 
 int map_print(FILE *pf, Map *mp) {
    
-    int i, j;   
+    int i, j, c;   
     
     
     if (pf == NULL || mp == NULL) {
@@ -256,5 +256,8 @@ int map_print(FILE *pf, Map *mp) {
        for(j=0; j < nrows; j++)
        {
           
-          return point_print(stdout, mp->array[i][j]);
+         c+= point_print(stdout, mp->array[i][j]);
+       }
+     }
+    return c;
 }
