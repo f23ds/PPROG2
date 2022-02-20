@@ -1,4 +1,4 @@
-all: p1_e1
+all: p1_e1 p1_e2
 
 p1_e1: p1_e1.o point.o 
 	gcc p1_e1.o point.o -g -o p1_e1
