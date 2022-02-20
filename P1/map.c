@@ -40,7 +40,7 @@ Map *map_new(unsigned int nrows, unsigned int ncols)
     
     for(i=0, ; i<nrows; i++){
        for( j=0; j<ncols; j++){
-           map->array[j][i] = point_new(j, i, BARRIER);
+           map->array[i][j] = point_new(j, i, BARRIER);
        }
     }
     
@@ -69,7 +69,6 @@ Point *map_insertPoint(Map *mp, Point *p)
 {
     if (mp == NULL || p == NULL)
     {
-        Map *map_readFromFile(FILE * pf);
 
         return NULL;
     }
@@ -87,7 +86,7 @@ int map_getNcols(const Map *mp)
         return -1;
     }
 
-    return mp->ncols;
+    return mp.ncols;
 }
 
 int map_getNrows(const Map *mp)
@@ -97,7 +96,7 @@ int map_getNrows(const Map *mp)
         return -1;
     }
 
-    return mp->nrows;
+    return mp.nrows;
 }
 
 Point *map_getInput(const Map *mp)
@@ -142,16 +141,16 @@ Point *map_getNeighbor(const Map *mp, const Point *p, Position pos)
     switch (pos)
     {
     case RIGHT:
-        return mp->array[p->y][p->x + 1];
+        return mp->array[p->y][p->(x + 1)];
 
     case UP:
-        return mp->array[p->y + 1][p->x];
+        return mp->array[p->(y + 1)][p->x];
 
     case LEFT:
-        return mp->array[p->y][p->x - 1];
+        return mp->array[p->y][p->(x - 1)];
 
     case DOWN:
-        return mp->array[p->y - 1][p->x];
+        return mp->array[p->(y - 1)][p->x];
 
     case STAY:
         return mp->array[p->y][p->x];
@@ -189,13 +188,39 @@ Status map_setOutput(Map *mp, Point *p)
 Map *map_readFromFIle(FILE *pf)
 {
     Map *map;
+    unsigned int nrows, ncols;
+    char symbol;
+   
     if (pf == NULL)
     {
         return NULL;
     }
-
-   
-    return map;
+    
+    /*Reserva y crea mapa*/
+    
+    map = (Map *)calloc(1, sizeof(Map));
+    
+    fscanf(pf, "%d %d", &nrows, &ncols);
+    
+    map.nrows = nrows;
+    map.ncols = ncols;
+    
+    for(i=0, ; i<nrows; i++){
+       for( j=0; j<ncols; j++){
+           
+           fscanf(pf, "%c", symbol);
+           
+           if( symbol == INPUT)
+           {
+                map->input = point_new(j, i, INPUT);
+           }else if(symbol == OUTPUT)
+           {
+                map->output = point_new(j, i, OUTPUT);
+           }else 
+              map->array[i][j] = point_new(j, i, symbol);
+       }
+    }
+     return map;
 }
 
 Bool map_equal(const void *_mp1, const void *_mp2)
