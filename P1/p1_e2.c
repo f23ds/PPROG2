@@ -9,7 +9,7 @@ int main()
 {
     Map *map;
     Point p, *aux;
-    Poaition pos;
+    Position pos;
 
     /* Inicializa un Map de 4 columnas y 3 filas*/
     
