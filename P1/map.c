@@ -37,12 +37,33 @@ Map *map_new(unsigned int nrows, unsigned int ncols)
 
     map->nrows = nrows;
     map->ncols = ncols;
+    
+    for(i=0, ; i<nrows; i++){
+       for( j=0; j<ncols; j++){
+           map->array[j][i] = point_new(j, i, BARRIER);
+       }
+    }
+    
+    map->input = point_new(0, 0, INPUT);
+    map->output = point_new(0, 0, OUTPUT);
 
     return map;
 }
 
-// TODO:
-void map_free(Map *);
+
+   void map_free(Map *mp){
+ 
+    int i, j;
+    
+    for(i=0, ; i<nrows; i++){
+       for( j=0; j<ncols; j++){
+            point_free(mp->array[i][j]);
+       }
+    }
+    point_free(output);
+    point_free(input);
+    free(mp);
+}
 
 Point *map_insertPoint(Map *mp, Point *p)
 {
@@ -148,12 +169,11 @@ Status map_setInput(Map *mp, Point *p)
         return ERROR;
     }
 
-    // TODO:
+    mp->input = p
 
     return OK;
 }
 
-// TODO:
 Status map_setOutput(Map *mp, Point *p)
 {
     if (mp == NULL || p == NULL)
@@ -161,7 +181,7 @@ Status map_setOutput(Map *mp, Point *p)
         return ERROR;
     }
 
-    // TODO:
+    mp->output = p;
 
     return OK;
 }
@@ -174,23 +194,25 @@ Map *map_readFromFIle(FILE *pf)
         return NULL;
     }
 
-    // TODO:
+   
     return map;
 }
 
 Bool map_equal(const void *_mp1, const void *_mp2)
 {
     int nrows1, nrows2, ncols1, ncols2, i, j;
+    Map * mp1 = (Map *) _mp1;
+    Map * mp2 = (Map *) _mp2;
 
-    if (_mp1 == NULL || _mp2 == NULL)
+    if (mp1 == NULL || mp2 == NULL)
     {
         return FALSE;
     }
 
-    nrows1 = map_getNrows(_mp1);
-    nrows2 = map_getNrows(_mp2);
-    ncols1 = map_getNcols(_mp1);
-    ncols2 = map_getNcols(_mp2);
+    nrows1 = mp1.nrows;
+    nrows2 = mp2.nrows;
+    ncols1 = mp1.ncols;
+    ncols2 = mp2.ncols;
 
     /* Si el número de filas y columnas no es idéntico, entonces los mapas no son iguales*/
     
@@ -199,19 +221,40 @@ Bool map_equal(const void *_mp1, const void *_mp2)
         return FALSE;
     }
 
+    if (point_equal(mp1->input, mp2->input)==FALSE || point_equal(mp1->output, mp2->output)==FALSE)
+    {
+        return FALSE;
+    }
+
+    
     for (i = 0; i < nrows1; i++)
     {
         for (j = 0; j < ncols1; j++)
         {
-            //TODO:
+            if (point_equal(mp1->array[i][j], mp2->array[i][j])==FALSE)
+            {
+            
+                  return FALSE;
+            }
         }
     }
+    return TRUE;
 }
 
 int map_print(FILE *pf, Map *mp) {
+   
+    int i, j;   
+    
+    
     if (pf == NULL || mp == NULL) {
         return -1;
     }
-
-    
+     
+   
+    for(i=0; i < ncols; i++)
+    {
+       for(j=0; j < nrows; j++)
+       {
+          
+          return point_print(stdout, mp->array[i][j]);
 }
