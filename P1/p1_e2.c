@@ -1,23 +1,36 @@
+/* PRACTICA 1 EJERCICIO 2
+  Grupo: 1102
+  Número de grupo:4
+  Nombres: Fabio Desio Suárez
+           Silvia Jiménez Real 
+  Fecha entrega: 21/02/2022
+  */
+  
+  
+/* Declaración bibliotecas públicas*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
+
+/* Declaración bibliotecas públicas*/
+
 #include "types.h"
 #include "point.h"
 #include "map.h"
-#include "map.c"
+
 
 int main()
 {
     Map *map;
-    Point p, *aux;
+    Point *aux;
     Position pos;
 
-    /* Inicializa un Map de 4 columnas y 3 filas*/
     
-    map = map_new(3, 4);
-
     /* Inserta en el Map el laberinto del enunciado punto a punto*/
     
-    map_readFromFile (stdin);  
+    map = map_readFromFile (stdin);  
+   
 
    /* Imprimimos el mapa*/
     
@@ -26,21 +39,21 @@ int main()
 
    /* Devuelve los vecinos en el Map del punto correspondiente al output del laberinto*/
     
-    aux = point_new (0, 0, BARRIER);
     
-    printf("Get output neighboors:\n");
+
+    printf("\nGet output neighbors:\n");
     
-    for(pos=0; pos<5; pos++)
+    for(pos=0; pos<4; pos++)
     {
         
-    aux = map_getNeighboor(map, map->output, pos);
+    aux = map_getNeighbor(map, map_getOutput(map), pos);
     point_print(stdout, aux);
         
     }
 
     /* Liberar la memoria del mapa */
-     map_free(map);
-    point_free (aux);
+    map_free(map);
+ 
     
     return 0;
    
