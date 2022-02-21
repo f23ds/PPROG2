@@ -1,103 +1,147 @@
+/* PRACTICA 1 EJERCICIO 1
+  Grupo: 1102
+  Número de grupo:4
+  Nombres: Fabio Desio Suárez
+           Silvia Jiménez Real 
+  Fecha entrega: 14/02/2022
+  */
+  
+  
+/* Declaración bibliotecas públicas*/
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "types.h"
+#include <string.h>
+
+/* Declaración bibliotecas privadas*/
+
 #include "point.h"
-#include "point.c"
+
+/* Declación constantes*/
+
+#define TAM 4
 
 int main()
 {
-    /*Declaramos el array*/
-    Point *p[4];
+    Bool cmp;
+    /* Declarar un array de 4 punteros a punto de nombre p*/
+    
+    Point *p[TAM];
     int i;
+    
+    /* Inicializar los elementos del array p[0] y p[1]*/
+    
+   
+     p[0] = point_new(0, 0, BARRIER);
+     p[1] = point_new(0, 1, BARRIER);
+    
+   
 
-    /*Inicializamos los punteros*/
-    p[0] = point_new(0, 0, BARRIER);
-    p[1] = point_new(0, 1, BARRIER);
 
-    /*Imprimimos los punteros*/
+    /*Imprimir ambos puntos en la salida estándar*/
+    
     point_print(stdout, p[0]);
     point_print(stdout, p[1]);
+    
+
+    /* Salto de línea*/
+    
     printf("\n");
 
-    /*Comparamos los puntos p[0] y p[1]*/
-    printf("Equal points p[0] and p[1]? ");
-    if (point_equal(p[0], p[1]) == FALSE)
+    /* Comparar ambos ambos puntos e imprimir el resultado*/
+    
+    
+    cmp = point_equal(p[0], p[1]);
+
+  
+    if (cmp == TRUE)
     {
-        printf("No\n");
+        printf("Equal points p[0] and p[1]? Yes\n");
     }
     else
     {
-        printf("Yes\n");
+        printf("Equal points p[0] and p[1]? No\n");
     }
 
-    /*Creamos una copia de p[0] y la imprimimos*/
+    /* Asignar al tecer elemento del array p una copia del primer punto*/
+    
     p[2] = point_hardcpy(p[0]);
+   
+    /* Imprimir el tercer punto en la salida estándar*/
+    
     printf("Creating p[2]: ");
     point_print(stdout, p[2]);
     printf("\n");
 
-    /*Comparar original y su copia */
-    printf("Equal points p[0] and p[2]? ");
-    if (point_equal(p[0], p[2]) == FALSE)
+    /* Comparamos el primer y el tercer punto e imprimimos el resultado*/
+    
+    cmp = point_equal(p[0], p[2]);
+
+   
+    if (cmp == TRUE)
     {
-        printf("No\n");
+        printf("Equal points p[0] and p[2]? Yes\n");
     }
     else
     {
-        printf("Yes\n");
+        printf("Equal points p[0] and p[2]? No\n");
     }
 
-    /* Asignamos en simbolo SPACE a p[2]*/
-    if (point_setSymbol(p[2], SPACE) == OK)
+    /* Asignamos el valor SPACE al tercer puntero*/
+    
+    if(point_setSymbol(p[2], SPACE)==OK){
+    
+    printf("Modifying p[2]: ");
+    point_print(stdout, p[2]);
+    printf("\n");
+    
+    }else
+        return 1;
+
+    /* Comparamos otra vez el primer y el tercer puntero e imprimimos el resultado*/
+    
+    cmp = point_equal(p[0], p[2]);
+    
+    
+    if (cmp == TRUE)
     {
-        /*Imprimir p[2] con la modificación*/
-        printf("Modifying p[2]: ");
-        point_print(stdout, p[2]);
-        printf("\n");
+        printf("Equal points p[0] and p[2]? Yes\n");
     }
     else
     {
-        return EXIT_FAILURE;
+        printf("Equal points p[0] and p[2]? No\n");
     }
 
-    /*Comparar de nuevo p[0] y p[2]*/
-    printf("Equal points p[0] and p[2]? ");
-    if (point_equal(p[0], p[2]) == FALSE)
-    {
-        printf("No\n");
-    }
-    else
-    {
-        printf("Yes\n");
-    }
-
-    /*Asignar a p[3] p[0]*/
+    /* Asignar a p[3] el primer punto*/
+    
+    printf("Assign p[3] = p[0]\n");
     p[3] = p[0];
+    
 
-    /*Modificar el simbolo de p[3] y lo imprimimos*/
-    if (point_setSymbol(p[3], OUTPUT) == OK)
-    {
-        /*Imprimir p[3] con la modificación*/
+    
+
+    /* Modificar el campo symbol de p[3] y asignamos el valor OUTPUT*/
+    
+    if(point_setSymbol(p[3], OUTPUT)==OK){
+        
         printf("Modifying p[3]: ");
         point_print(stdout, p[3]);
         printf("\n");
-    }
-    else
-    {
-        return EXIT_FAILURE;
-    }
 
-    /*Imprimimos los cuatro puntos*/
-    for (i = 0; i < 4; i++)
-    {
-        point_print(stdout, p[i]);
+    }else 
+        return 1;
+    
+    
+    /* Imprimimos y liberamos los cuatro puntos*/
+    
+    for(i=0; i<4; i++){
+    
+    	point_print(stdout, p[i]);
     }
-
-    /*Liberamos la memoria*/
-    for (i = 0; i < 4; i++)
-    {
+    
+    for (i=0; i<3; i++) {
         point_free(p[i]);
     }
-
-    return EXIT_SUCCESS;
-}
+    
+    return 0;
+   }
