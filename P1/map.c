@@ -26,6 +26,7 @@ struct _Point
 Map *map_new(unsigned int nrows, unsigned int ncols)
 {
     Map *map;
+    int i,j;
 
     if (nrows > MAX_NROWS || ncols > MAX_NCOLS)
     {
@@ -38,30 +39,33 @@ Map *map_new(unsigned int nrows, unsigned int ncols)
     map->nrows = nrows;
     map->ncols = ncols;
     
-    for(i=0, ; i<nrows; i++){
+    for(i=0 ; i<nrows; i++){
        for( j=0; j<ncols; j++){
            map->array[i][j] = point_new(j, i, BARRIER);
        }
     }
     
     map->input = point_new(0, 0, INPUT);
-    map->output = point_new(0, 0, OUTPUT);
+    map->output = point_new(0, 1, OUTPUT);
 
     return map;
 }
 
-
-   void map_free(Map *mp){
+void map_free(Map *mp){
  
     int i, j;
+    unsigned int nrows, ncols;
+   
+    nrows = mp->nrows;
+    ncols = mp->ncols;
     
-    for(i=0, ; i<nrows; i++){
-       for( j=0; j<ncols; j++){
+    for(i=0 ; i< nrows; i++){
+       for( j=0; j< ncols; j++){
             point_free(mp->array[i][j]);
        }
     }
-    point_free(output);
-    point_free(input);
+    point_free(mp->output);
+    point_free(mp->input);
     free(mp);
 }
 
@@ -86,7 +90,7 @@ int map_getNcols(const Map *mp)
         return -1;
     }
 
-    return mp.ncols;
+    return mp->ncols;
 }
 
 int map_getNrows(const Map *mp)
@@ -96,7 +100,7 @@ int map_getNrows(const Map *mp)
         return -1;
     }
 
-    return mp.nrows;
+    return mp->nrows;
 }
 
 Point *map_getInput(const Map *mp)
@@ -141,16 +145,16 @@ Point *map_getNeighbor(const Map *mp, const Point *p, Position pos)
     switch (pos)
     {
     case RIGHT:
-        return mp->array[p->y][p->(x + 1)];
+        return mp->array[p->y][p->x+1];
 
     case UP:
-        return mp->array[p->(y + 1)][p->x];
+        return mp->array[p->y-1][p->x];
 
     case LEFT:
-        return mp->array[p->y][p->(x - 1)];
+        return mp->array[p->y][p->x-1];
 
     case DOWN:
-        return mp->array[p->(y - 1)][p->x];
+        return mp->array[p->y+1][p->x];
 
     case STAY:
         return mp->array[p->y][p->x];
@@ -168,7 +172,7 @@ Status map_setInput(Map *mp, Point *p)
         return ERROR;
     }
 
-    mp->input = p
+    mp->input = p;
 
     return OK;
 }
@@ -185,11 +189,12 @@ Status map_setOutput(Map *mp, Point *p)
     return OK;
 }
 
-Map *map_readFromFIle(FILE *pf)
+Map *map_readFromFile(FILE *pf)
 {
     Map *map;
     unsigned int nrows, ncols;
     char symbol;
+    int i,j;
    
     if (pf == NULL)
     {
@@ -200,26 +205,48 @@ Map *map_readFromFIle(FILE *pf)
     
     map = (Map *)calloc(1, sizeof(Map));
     
-    fscanf(pf, "%d %d", &nrows, &ncols);
+    fscanf(pf, "%u %u\n", &nrows, &ncols);
     
-    map.nrows = nrows;
-    map.ncols = ncols;
     
-    for(i=0, ; i<nrows; i++){
-       for( j=0; j<ncols; j++){
-           
-           fscanf(pf, "%c", symbol);
-           
-           if( symbol == INPUT)
-           {
-                map->input = point_new(j, i, INPUT);
-           }else if(symbol == OUTPUT)
-           {
-                map->output = point_new(j, i, OUTPUT);
-           }else 
-              map->array[i][j] = point_new(j, i, symbol);
+    map->nrows = nrows;
+    map->ncols = ncols;
+    
+    
+    
+    for(i=0; i<nrows; i++)
+    {
+       if(i> 0){
+           fscanf(pf,"\n");
        }
+       
+       
+       for(j=0; j<ncols; j++)
+       {
+           
+             fscanf(pf, "%c", &symbol);
+             
+           
+              
+              map->array[i][j] = point_new(j, i, symbol);
+           
+             if( symbol == INPUT)
+             {
+                map->input = point_new(j, i, INPUT);
+
+                
+             }else if(symbol == OUTPUT)
+             {
+                 map->output = point_new(j, i, OUTPUT);
+             }
+             
+  
+           }
+           
+          
+    
     }
+    
+ 
      return map;
 }
 
@@ -234,10 +261,10 @@ Bool map_equal(const void *_mp1, const void *_mp2)
         return FALSE;
     }
 
-    nrows1 = mp1.nrows;
-    nrows2 = mp2.nrows;
-    ncols1 = mp1.ncols;
-    ncols2 = mp2.ncols;
+    nrows1 = mp1->nrows;
+    nrows2 = mp2->nrows;
+    ncols1 = mp1->ncols;
+    ncols2 = mp2->ncols;
 
     /* Si el número de filas y columnas no es idéntico, entonces los mapas no son iguales*/
     
@@ -274,11 +301,12 @@ int map_print(FILE *pf, Map *mp) {
     if (pf == NULL || mp == NULL) {
         return -1;
     }
-     
+    
+    printf("%u, %u\n", mp->nrows, mp->ncols);
    
-    for(i=0; i < ncols; i++)
+    for(i=0; i < mp->nrows; i++)
     {
-       for(j=0; j < nrows; j++)
+       for(j=0; j < mp->ncols; j++)
        {
           
          c+= point_print(stdout, mp->array[i][j]);
