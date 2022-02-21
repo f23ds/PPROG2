@@ -1,163 +1,205 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
-#include "point.h"
 #include "types.h"
+#include "point.h"
 
-struct _Point {
+
+struct _Point
+{
     int x, y;
     char symbol;
-    Bool visited; /* for DFS*/
+
+    Bool visited;
 };
 
-Point * point_new (int x, int y, char symbol) {
-    Point *p1;
+Point *point_new(int x, int y, char symbol)
+{
+    Point *point;
 
-    p1 = (Point *) malloc (1 * sizeof(Point));
+    point = (Point *)malloc(sizeof(Point));
 
-    if (p1 == NULL) {
+    if (point == NULL)
+    {
         return NULL;
-    } else {
-        p1->x = x;
-        p1->y = y;
-        p1->symbol = symbol;
     }
-    
-    return p1;
+    else
+    {
+        point->x = x;
+        point->y = y;
+        point->symbol = symbol;
+    }
+
+    return point;
 }
 
-
-void point_free (Point *p) {
+void point_free(Point *p)
+{
     free(p);
 }
 
-int point_getCoordinateX (const Point *p) {
-    
-    if (p == NULL) {
+int point_getCoordinateX(const Point *p)
+{
+    int x;
+
+    if (p == NULL)
+    {
         return INT_MAX;
     }
 
-    return p->x;
+    x = p->x;
+
+    return x;
 }
 
-int point_getCoordinateY (const Point *p) {
-    
-    if (p == NULL) {
+int point_getCoordinateY(const Point *p)
+{
+    int y;
+
+    if (p == NULL)
+    {
         return INT_MAX;
     }
 
-    return p->y;
+    y = p->y;
+
+    return y;
 }
 
-char point_getSymbol (const Point *p) {
-    
-    if (p == NULL) {
+char point_getSymbol(const Point *p)
+{
+    char symbol;
+
+    if (p == NULL)
+    {
         return ERRORCHAR;
     }
 
-    return p->symbol;
+    symbol = p->symbol;
+
+    return symbol;
 }
 
-
-Status point_setCoordinateX (Point *p, int x) {
-
-    if (p == NULL) {
+Status point_setCoordinateX(Point *p, int x)
+{
+    if (p == NULL)
+    {
         return ERROR;
     }
-    
-    if (x>=0) {
+
+    /* x debe ser mayor o igual que cero*/
+    if (x >= 0)
+    {
         p->x = x;
-    }else{
+    }
+    else
+    {
         return ERROR;
     }
 
     return OK;
 }
 
-
-Status point_setCoordinateY (Point *p, int y) {
-
-    if (p == NULL) {
+Status point_setCoordinateY(Point *p, int y)
+{
+    if (p == NULL)
+    {
         return ERROR;
     }
-    
-    if (y>=0) {
+
+    /* y debe ser igual o mayor que cero*/
+    if (y >= 0)
+    {
         p->y = y;
-    } else {
+    }
+    else
+    {
         return ERROR;
     }
 
     return OK;
 }
 
-Status  point_setSymbol (Point *p, char c) {
-    
-    if (p == NULL) {
+Status point_setSymbol(Point *p, char c)
+{
+    if (p == NULL)
+    {
         return ERROR;
     }
-    
-    if (c == ERRORCHAR || c == INPUT || c == OUTPUT || c == BARRIER || c == SPACE) {
+
+    if (c == 'E' || c == 'i' || c == 'o' || c == '+' || c == '.')
+    {
         p->symbol = c;
-    } else {
+    }
+    else
+    {
         return ERROR;
     }
 
     return OK;
 }
 
-Point *point_hardcpy (const Point *src) {
+Point *point_hardcpy(const Point *src)
+{
     Point *trg;
-    int x1, y1;
-    char c;
 
-    if (src==NULL) {
-        return NULL; 
-    }
+    trg = (Point *)malloc(sizeof(Point));
 
-    x1 = point_getCoordinateX(src);
-    y1 = point_getCoordinateY(src);
-    c = point_getSymbol(src);
-
-    trg = point_new(x1, y1, c);
-    
-    if (trg == NULL) {
+    if (trg == NULL)
+    {
         return NULL;
     }
-    
+
+    trg->x = src->x;
+    trg->y = src->y;
+    trg->symbol = src->symbol;
+
     return trg;
 }
 
-Bool point_equal (const void *p1, const void *p2) {
+Bool point_equal(const void *p1, const void *p2)
+{
+    Point * point1 = (Point *) p1;
+    Point * point2 = (Point *) p2;
 
-    if (p1==NULL || p2==NULL) {
+    if (point1 == NULL || point2 == NULL)
+    {
         return FALSE;
     }
 
-    if (point_getCoordinateX(p1) == point_getCoordinateX(p2)) {
-        if (point_getCoordinateY(p1) == point_getCoordinateY(p2)) {
-            if (point_getSymbol(p1)==point_getSymbol(p2)) {
+    if (point1->x == point2->x)
+    {
+        if (point1->y == point2->y)
+        {
+            if (point1->symbol == point2->symbol)
+            {
                 return TRUE;
-            }else{
+            }
+            else
+            {
                 return FALSE;
             }
-        } else{
+        }
+        else
+        {
             return FALSE;
         }
-    } else {
+    }
+    else
+    {
         return FALSE;
     }
 }
 
-int point_print (FILE *pf, const void *p) {
-    int x, y;
-    char s;
-    
-    if (pf == NULL || p == NULL) {
+int point_print(FILE *pf, const void *p)
+{
+    Point * point;
+    if (p == NULL)
+    {
         return -1;
     }
 
-    x = point_getCoordinateX(p);
-    y = point_getCoordinateY(p);
-    s = point_getSymbol(p);
-    
-    return fprintf(pf, "[(%d, %d): %c]", x, y, s);
+    point = (Point *)p;
+
+    return fprintf(pf, "[(%d, %d): %c]", point->x, point->y, point->symbol);
 }
