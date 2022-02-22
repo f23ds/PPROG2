@@ -53,7 +53,7 @@ int main()
     
     printf("\nGet right inferior corner neighboors:\n");
   
-  point = 
+  point = point_new(ncols, nrows, BARRIER);
     
     for(pos=0; pos<4; pos++)
     {
