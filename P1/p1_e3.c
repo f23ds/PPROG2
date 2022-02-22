@@ -20,16 +20,27 @@
 #include "map.h"
 
 
-int main()
+int main(int argc, char** argv)
 {
     Map *map;
-    Point *aux;
+    Point *aux, *point;
     Position pos;
+    FILE *pf;
+    int ncols, nrows; 
 
-    
+    /* Comprobamos que hay el número correcto de argumentos en la command line */
+    if (argc != 2) {
+      printf("Error en la ejecución. Debe ser del tipo: './p1_e3 laberinto_1.txt'\n");
+      return -1;
+    }
+
+    pf = fopen(argv[1], "r");
+
+    if (!pf) return -1;
+
     /* Inserta en el Map el laberinto del enunciado punto a punto*/
     
-    map = map_readFromFile ("laberinto1.txt");  
+    map = map_readFromFile (pf);  
    
 
    /* Imprimimos el mapa*/
@@ -53,19 +64,24 @@ int main()
     
     printf("\nGet right inferior corner neighboors:\n");
   
-  point = 
+    ncols = map_getNcols(map);
+    nrows = map_getNrows(map);
+
+    point = point_new(ncols-1, nrows-1, BARRIER);
     
     for(pos=0; pos<4; pos++)
     {
         
     aux = map_getNeighbor(map, map_getPoint(map, point), pos);
     point_print(stdout, aux);
-        
+      
     }
-
+    
+    printf("\n");
     /* Liberar la memoria del mapa */
     map_free(map);
- 
+    point_free(point);
+    fclose(pf);
     
     return 0;
    

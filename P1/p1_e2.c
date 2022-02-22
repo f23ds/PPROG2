@@ -51,6 +51,7 @@ int main()
         
     }
 
+    printf("\n");
     /* Liberar la memoria del mapa */
     map_free(map);
  
