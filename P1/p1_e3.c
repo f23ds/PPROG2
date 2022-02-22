@@ -52,11 +52,13 @@ int main()
      /* Devuelve los vecinos en el Map del punto correspondiente al output del laberinto*/
     
     printf("\nGet right inferior corner neighboors:\n");
+  
+  point = 
     
     for(pos=0; pos<4; pos++)
     {
         
-    aux = map_getNeighbor(map, map_getOutput(map), pos);
+    aux = map_getNeighbor(map, map_getPoint(map, point), pos);
     point_print(stdout, aux);
         
     }
