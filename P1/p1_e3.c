@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     FILE *pf;
     int ncols, nrows; 
 
-    /* Comprobamos que hay el número correcto de argumentos en la command line */
+    /* Comprobamos que hay el número correcto de argumentos en la command line /
     if (argc != 2) {
       printf("Error en la ejecución. Debe ser del tipo: './p1_e3 laberinto_1.txt'\n");
       return -1;
