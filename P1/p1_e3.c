@@ -69,6 +69,7 @@ int main(int argc, char** argv)
 
     point = point_new(ncols-1, nrows-1, BARRIER);
     
+    
     for(pos=0; pos<4; pos++)
     {
         
