@@ -28,6 +28,7 @@ Map *map_new(unsigned int nrows, unsigned int ncols)
     Map *map;
     int i, j;
 
+    /* Comprobamos que los valores de las filas y las columnas es correcto */
     if (nrows > MAX_NROWS || ncols > MAX_NCOLS)
     {
         return NULL;
@@ -39,6 +40,7 @@ Map *map_new(unsigned int nrows, unsigned int ncols)
     map->nrows = nrows;
     map->ncols = ncols;
 
+    /* Inicializamos el mapa con un símbolo cualquiera */
     for (i = 0; i < nrows; i++)
     {
         for (j = 0; j < ncols; j++)
@@ -47,6 +49,7 @@ Map *map_new(unsigned int nrows, unsigned int ncols)
         }
     }
 
+    /* Inicializamos los valores del input y del output */
     map->input = point_new(0, 0, INPUT);
     map->output = point_new(0, 1, OUTPUT);
 
@@ -55,13 +58,13 @@ Map *map_new(unsigned int nrows, unsigned int ncols)
 
 void map_free(Map *mp)
 {
-
     int i, j;
     unsigned int nrows, ncols;
 
     nrows = mp->nrows;
     ncols = mp->ncols;
 
+    /* Liberamos cada punto del mapa */
     for (i = 0; i < nrows; i++)
     {
         for (j = 0; j < ncols; j++)
@@ -69,6 +72,7 @@ void map_free(Map *mp)
             point_free(mp->array[i][j]);
         }
     }
+
     point_free(mp->output);
     point_free(mp->input);
     free(mp);
@@ -78,13 +82,13 @@ Point *map_insertPoint(Map *mp, Point *p)
 {
     if (mp == NULL || p == NULL)
     {
-
         return NULL;
     }
 
     /* Insertamos el punto en el mapa a partir de sus coordenadas*/
     mp->array[p->y][p->x] = p;
 
+    /* Devolvemos el punto */ 
     return mp->array[p->y][p->x];
 }
 
@@ -207,7 +211,6 @@ Map *map_readFromFile(FILE *pf)
     }
 
     /*Reserva y crea mapa*/
-
     map = (Map *)calloc(1, sizeof(Map));
 
     fscanf(pf, "%u %u\n", &nrows, &ncols);
@@ -217,6 +220,7 @@ Map *map_readFromFile(FILE *pf)
 
     for (i = 0; i < nrows; i++)
     {
+        /* Consideramos el salto de línea para utilizar correctamente la función fscanf */
         if (i > 0)
         {
             fscanf(pf, "\n");
@@ -229,6 +233,7 @@ Map *map_readFromFile(FILE *pf)
 
             map->array[i][j] = point_new(j, i, symbol);
 
+            /* Especificamos los valores del input y del output */
             if (symbol == INPUT)
             {
                 map->input = point_new(j, i, INPUT);
@@ -246,6 +251,8 @@ Map *map_readFromFile(FILE *pf)
 Bool map_equal(const void *_mp1, const void *_mp2)
 {
     int nrows1, nrows2, ncols1, ncols2, i, j;
+
+    /* Casteamos el tipo void * para transformarlo en un tipo Map * */
     Map *mp1 = (Map *)_mp1;
     Map *mp2 = (Map *)_mp2;
 
@@ -254,13 +261,12 @@ Bool map_equal(const void *_mp1, const void *_mp2)
         return FALSE;
     }
 
-    nrows1 = mp1->nrows;
-    nrows2 = mp2->nrows;
     ncols1 = mp1->ncols;
+    nrows1 = mp1->nrows;
     ncols2 = mp2->ncols;
+    nrows2 = mp2->nrows;
 
     /* Si el número de filas y columnas no es idéntico, entonces los mapas no son iguales*/
-
     if (nrows1 != nrows2 || ncols1 != ncols2)
     {
         return FALSE;
@@ -271,13 +277,13 @@ Bool map_equal(const void *_mp1, const void *_mp2)
         return FALSE;
     }
 
+    /* Si hay un solo punto que sea distinto return FALSE */
     for (i = 0; i < nrows1; i++)
     {
         for (j = 0; j < ncols1; j++)
         {
             if (point_equal(mp1->array[i][j], mp2->array[i][j]) == FALSE)
             {
-
                 return FALSE;
             }
         }
@@ -287,7 +293,6 @@ Bool map_equal(const void *_mp1, const void *_mp2)
 
 int map_print(FILE *pf, Map *mp)
 {
-
     int i, j, c;
 
     if (pf == NULL || mp == NULL)
@@ -301,7 +306,7 @@ int map_print(FILE *pf, Map *mp)
     {
         for (j = 0; j < mp->ncols; j++)
         {
-
+            /* Utilizamos += porque el return de la función si todo se ha ejecutado correctamente es el número de caracteres impresos */
             c += point_print(stdout, mp->array[i][j]);
         }
     }

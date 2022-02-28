@@ -1,5 +1,5 @@
 /* PRACTICA 1 EJERCICIO 1
-  Grupo: 1102
+  Grupo: 2102
   Número de grupo:4
   Nombres: Fabio Desio Suárez
            Silvia Jiménez Real 
