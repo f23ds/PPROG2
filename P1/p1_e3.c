@@ -1,5 +1,5 @@
 /* PRACTICA 1 EJERCICIO 3
-  Grupo: 1102
+  Grupo: 2102
   Número de grupo:4
   Nombres: Fabio Desio Suárez
            Silvia Jiménez Real
@@ -32,22 +32,20 @@ int main(int argc, char **argv)
     return -1;
   }
 
+  /* Abrimos el archivo cuyo nombre es el segundo argumentos de la command line */
   pf = fopen(argv[1], "r");
 
   if (!pf)
     return -1;
 
   /* Inserta en el Map el laberinto del enunciado punto a punto*/
-
   map = map_readFromFile(pf);
 
   /* Imprimimos el mapa*/
-
   printf("Map:\n");
   map_print(stdout, map);
 
   /* Devuelve los vecinos en el Map del punto correspondiente al output del laberinto*/
-
   printf("\nGet output neighboors:\n");
 
   for (pos = 0; pos < NUM_VECINOS; pos++)
@@ -58,12 +56,12 @@ int main(int argc, char **argv)
   }
 
   /* Devuelve los vecinos en el Map del punto correspondiente al output del laberinto*/
-
   printf("\nGet right inferior corner neighboors:\n");
 
   ncols = map_getNcols(map);
   nrows = map_getNrows(map);
 
+  /* Accedemos al punto que está en el down right corner */
   point = point_new(ncols - 1, nrows - 1, BARRIER);
 
   for (pos = 0; pos < NUM_VECINOS; pos++)
@@ -73,7 +71,9 @@ int main(int argc, char **argv)
     point_print(stdout, aux);
   }
 
+  /* Imprimimos línea por cuestiones de formato */
   printf("\n");
+  
   /* Liberar la memoria del mapa */
   map_free(map);
   point_free(point);
