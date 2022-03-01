@@ -229,21 +229,39 @@ int point_print(FILE *pf, const void *p)
 */
 Status point_euDistance (const Point *p1, const Point *p2, double *
 distance);
-/**
-* @brief Compares two points using their euclidean distances to the
-point (0,0).
-*
-*
-* @param p1,p2 Points to compare.
-*
-* @return It returns an integer less than, equal to, or greater than
-zero if
-* the euclidean distance of p1 to the origin of coordinates is found
-,
-* respectively, to be less than, to match or be greater
-* than the euclidean distance of p2. In case of error, returns
-INT_MIN.
-*/
-int point_cmpEuDistance (const void *p1, const void *p2);
 
+int point_cmpEuDistance (const void *p1, const void *p2)
+{
+     Point * point1, *point2;
+     int x, y;
+    double distance1, distance2;;
+    if (p1 == NULL || p2 == NULL )
+    {
+        return INT_MIN;
+    }
+
+    point1 = (Point *)p1;
+    point2 = (Poin *)p2;
+    
+    x1 = point_getCoordinateX(p1);
+    y1 = point_getCoordinateY(p1);
+    
+    distance1 = sqrt ((x1)^2 + (y1)^2);
+    
+    x2 = point_getCoordinateX(p2);
+    y2 = point_getCoordinateY(p2);
+    
+    distance2 = sqrt ((x2)^2 + (y2)^2);
+    
+    if(distance1 == distance2)}
+    {
+        return 0;
+        
+    }elseif(distance1 > distance2)
+    {
+       return 1;
+        
+    }else
+       return -1;
+}
 
