@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <math.h>
 #include "types.h"
 #include "point.h"
-
 
 struct _Point
 {
@@ -159,8 +159,8 @@ Point *point_hardcpy(const Point *src)
 
 Bool point_equal(const void *p1, const void *p2)
 {
-    Point * point1 = (Point *) p1;
-    Point * point2 = (Point *) p2;
+    Point *point1 = (Point *)p1;
+    Point *point2 = (Point *)p2;
 
     if (point1 == NULL || point2 == NULL)
     {
@@ -193,7 +193,7 @@ Bool point_equal(const void *p1, const void *p2)
 
 int point_print(FILE *pf, const void *p)
 {
-    Point * point;
+    Point *point;
     if (p == NULL)
     {
         return -1;
@@ -202,4 +202,19 @@ int point_print(FILE *pf, const void *p)
     point = (Point *)p;
 
     return fprintf(pf, "[(%d, %d): %c]", point->x, point->y, point->symbol);
+}
+
+Status point_euDistance(const Point *p1, const Point *p2, double *distance)
+{
+    double dist;
+    /* Checkeamos los punteros */
+    if (!p1 || !p2 || !distance) return ERROR;
+
+    /* Calculamos la distancia euclídea entre los puntos */
+    dist = sqrt(pow((p1->x-p2->x),2)+pow((p1->y-p2->y), 2)); 
+
+    /* Guardamos el valor de la distancia en el puntero */
+    distance = &dist;
+
+    return OK;
 }
