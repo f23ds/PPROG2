@@ -121,8 +121,8 @@ Status point_setCoordinateY (Point *p, int y) ;
  */
 Status  point_setSymbol (Point *p, char c) ;
 
-Bool point_getVisited (const Point *p); // DFS (P2)
-Status point_setVisited (Point *p, Bool bol);    // DFS (P2)
+Bool point_getVisited (const Point *p); /* DFS (P2) */
+Status point_setVisited (Point *p, Bool bol);    /* DFS (P2) */
 
 
 /**
@@ -179,8 +179,7 @@ Bool point_equal (const void *p1, const void *p2);
  */
 int point_print (FILE *pf, const void *p); 
 
-
-//////////////////////////   P2 
+/* P2 */ 
 
 /* START [_EUC] */
 /** 

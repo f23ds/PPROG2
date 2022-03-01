@@ -15,7 +15,7 @@ typedef enum {
     UP = 1,
     LEFT = 2,
     DOWN = 3,       
-    STAY = 4,
+    STAY = 4
 } Position;
 
 typedef struct _Map Map;
@@ -111,7 +111,7 @@ Point *map_getPoint (const Map *mp, const Point *p);
  **/
 Point *map_getNeighboor(const Map *mp, const Point *p, Position pos);
 
-// setters
+/* setters */
 Status map_setInput(Map *mp, Point *p);
 Status map_setOutput (Map *mp,Point *p);
 
