@@ -203,3 +203,45 @@ int point_print(FILE *pf, const void *p)
 
     return fprintf(pf, "[(%d, %d): %c]", point->x, point->y, point->symbol);
 }
+
+/**
+* @brief Calculate the euclidean distance betweeen two points.
+*
+* The euclidean distance is defined as sqrt ((x1-x2)^2 + (y1-y2)^2)
+* where (x1, y1) and (x2, y2) are the coordinate of both points
+*
+* @code
+* // Example of use
+* const Point *p1, *p2;
+* double d;
+* p1 = point_new (x1, y1, BARRIER);
+* p2 = point_new (x2, y2, SPACE);
+* point_euDistance (p1, p2, &d);
+* printf ("%lf", d);
+* // .... additional code ....
+* @endcode
+*
+* @param p1 pointer to point
+* @param p2 pointer to point
+* @param distance addresss
+*
+* @return Returns OK or ERROR in case of invalid parameters
+*/
+Status point_euDistance (const Point *p1, const Point *p2, double *
+distance);
+/**
+* @brief Compares two points using their euclidean distances to the
+point (0,0).
+*
+*
+* @param p1,p2 Points to compare.
+*
+* @return It returns an integer less than, equal to, or greater than
+zero if
+* the euclidean distance of p1 to the origin of coordinates is found
+,
+* respectively, to be less than, to match or be greater
+* than the euclidean distance of p2. In case of error, returns
+INT_MIN.
+*/
+int point_cmpEuDistance (const void *p1, const void *p2);
