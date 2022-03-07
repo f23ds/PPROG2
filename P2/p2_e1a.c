@@ -39,8 +39,6 @@ int main(int argc, char **argv)
     if (n < MIN_POINTS || n > MAX_POINTS)
         return 1;
 
-    /* set the random seed */
-    srand(time(NULL));
     /* coordinate origin point */
     origen = point_new(0, 0, BARRIER);
 

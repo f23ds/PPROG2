@@ -207,7 +207,7 @@ int point_print(FILE *pf, const void *p)
 Status point_euDistance(const Point *p1, const Point *p2, double *distance)
 {
     int x1, x2, y1, y2, x, y;
-    double dist;
+
     /* Checkeamos los punteros */
     if (!p1 || !p2 || !distance)
         return ERROR;
@@ -215,54 +215,48 @@ Status point_euDistance(const Point *p1, const Point *p2, double *distance)
     x1 = p1->x;
     x2 = p2->x;
     y1 = p1->y;
-    y2 = p2->y;    
+    y2 = p2->y;
 
-    x = fabs(x1 - x2);
-    y = fabs(y1 - y2);
+    x = x1 - x2;
+    y = y1 - y2;
 
     /* Calculamos la distancia euclídea entre los puntos */
-    dist = sqrt(x * x + y * y);
-    /* Guardamos el valor de la distancia en el puntero */
-    distance = &dist;
+    *distance = sqrt(x * x + y * y);
 
     return OK;
 }
 
 int point_cmpEuDistance(const void *p1, const void *p2)
 {
-    Point *point1, *point2;
-    int x1, y1, x2, y2;
-    double distance1, distance2;
-    ;
-
+    Point *point1, *point2, *origen;
+    double dist1, dist2 = 0.0;
+    
     /* Comprobamos los punteros */
     if (p1 == NULL || p2 == NULL)
     {
         return INT_MIN;
     }
 
+    /* Extraemos los puntos con los que vamos a trabajar */
     point1 = (Point *)p1;
     point2 = (Point *)p2;
 
-    x1 = point_getCoordinateX(point1);
-    y1 = point_getCoordinateY(point1);
+    origen = point_new(0, 0, BARRIER);
 
-    /* Implementamos la fórmula de la distancia */
-    distance1 = sqrt(((x1) ^ 2) + ((y1) ^ 2));
+    point_euDistance(point1, origen, &dist1);
+    point_euDistance(point2, origen, &dist2);
 
-    x2 = point_getCoordinateX(point2);
-    y2 = point_getCoordinateY(point2);
-
-    distance2 = sqrt(((x2) ^ 2) + ((y2) ^ 2));
-
-    if (distance1 == distance2)
+    if (dist1 == dist2)
     {
         return 0;
     }
-    else if (distance1 > distance2)
+    else if (dist1 > dist2)
     {
         return 1;
     }
     else
         return -1;
+
+    point_free(origen);
+
 }
