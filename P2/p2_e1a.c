@@ -27,22 +27,17 @@
 
 int main(int argc, char **argv)
 {
-    Point *origen;
+    Point *origen, *p[MAX_POINTS];
     int n, i, j, cmp;
     double d;
 
-    /* Comprobamos los argumentos de la command line */
     if (argc != 2)
         return 1;
 
     n = atoi(argv[1]);
 
-    /* Comprobamos el valor de n */
     if (n < MIN_POINTS || n > MAX_POINTS)
         return 1;
-
-    /* Creamos el array de puntos */
-    Point *p[n];
 
     /* set the random seed */
     srand(time(NULL));
@@ -68,7 +63,7 @@ int main(int argc, char **argv)
 
         point_print(stdout, p[i]);
         point_euDistance(p[i], origen, &d);
-        fprintf(stdout, "Euclidean distance: %lf", d);
+        fprintf(stdout, " distance: %f\n", d);
     }
 
     /* Comparamos las distancias euclídeas para todos los pares de puntos */
@@ -83,14 +78,16 @@ int main(int argc, char **argv)
             }
             else if (cmp == -1)
             {
-                fprintf(stdout, "p[%d] < p[%d]: True", i, j);
+                fprintf(stdout, "p[%d] < p[%d]: True\n", i, j);
             }
             else
             {
-                fprintf(stdout, "p[%d] < p[%d]: False", i, j);
+                fprintf(stdout, "p[%d] < p[%d]: False\n", i, j);
             }
         }
     }
+
+    point_free(origen);
 
     return 0;
 }
