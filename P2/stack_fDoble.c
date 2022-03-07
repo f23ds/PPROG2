@@ -85,7 +85,7 @@ of characters writted.
 * The function returns a negative value if there was a problem
 writing to the file.
 * */
-int stack_print(FILE* fp, const Stack *s, P_stack_ele_print f);
+int stack_print(FILE* fp, const Stack *s, P_stack_ele_print f){
 
 Stack *stack_orderPoints(Stack *sin)
 {
