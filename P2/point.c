@@ -260,3 +260,8 @@ int point_cmpEuDistance(const void *p1, const void *p2)
     point_free(origen);
 
 }
+
+Bool point_getVisited(const Point *p){
+
+}      
+Status point_setVisited(Point *p, Bool bol); /* DFS (P2) *
