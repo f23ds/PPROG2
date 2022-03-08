@@ -4,10 +4,13 @@
 #include "map.h"
 #include "point.h"
 #include "types.h"
+#include "stack_fDoble.h"
 
-#define MAX_NCOLS 64  /* Maximum map cols*/
-#define MAX_NROWS 64  /* Maximum map rows*/
-#define MAX_BUFFER 64 /* Maximum file line size*/
+#define MAX_NCOLS 64           /* Maximum map cols*/
+#define MAX_NROWS 64           /* Maximum map rows*/
+#define MAX_BUFFER 64          /* Maximum file line size*/
+#define MAX_STACK_SIZE 64 * 64 /* Maximum stack size */
+#define NUM_NEIGHBORS 4        /* Ignoramos la posición STAY */
 
 struct _Map
 {
@@ -21,6 +24,12 @@ struct _Point
     int x, y;
     char symbol;
     Bool visited; /* for DFS*/
+};
+
+struct _Stack
+{
+    void *data[MAX_STACK_SIZE];
+    int top;
 };
 
 Map *map_new(unsigned int nrows, unsigned int ncols)
@@ -88,7 +97,7 @@ Point *map_insertPoint(Map *mp, Point *p)
     /* Insertamos el punto en el mapa a partir de sus coordenadas*/
     mp->array[p->y][p->x] = p;
 
-    /* Devolvemos el punto */ 
+    /* Devolvemos el punto */
     return mp->array[p->y][p->x];
 }
 
@@ -311,4 +320,56 @@ int map_print(FILE *pf, Map *mp)
         }
     }
     return c;
+}
+
+Point *map_dfs(FILE *pf, Map *mp)
+{
+    Point *p = NULL, *input, *output, *neighbors[NUM_NEIGHBORS];
+    Stack *s;
+    Bool cmp;
+    int i;
+
+    /* Comprobamos los punteros */
+    if (!pf || !mp)
+        return NULL;
+
+    input = map_getInput(mp);
+    output = map_getoutput(mp);
+
+    /* Inicializamos la pila */
+    s = stack_init();
+
+    if (!s)
+        return NULL;
+
+    /* Comenzamos el algoritmo en el input */
+    stack_push(s, input);
+
+    /* El bucle debe parar cuando el punto sea igual que el output */
+    cmp = point_equal(p, output);
+    while (!cmp && !stack_isEmpty(s))
+    {
+        p = stack_pop(s);
+        if (!point_getVisited(p))
+        {
+            point_setVisited(p, TRUE);
+            /* Llenamos la array de vecinos */
+            for (i = 0; i < NUM_NEIGHBORS; i++)
+            {
+                neighbors[i] = map_getNeighbor(mp, p, i);
+                /* Si es visitado, lo añadimos a la pila */
+                if (!point_getVisited(neighbors[i]))
+                {
+                    stack_push(s, neighbors[i]);
+                }
+            }
+        }
+    }
+    stack_free(s);
+
+    cmp = point_equal(p, output);
+    if (cmp)
+        return p;
+
+    return NULL;
 }
