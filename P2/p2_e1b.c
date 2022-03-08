@@ -14,7 +14,7 @@
 Stack *stack_orderPoints(Stack *sin)
 {
     Stack *sout;
-    int *tmp, cmp;
+    int *tmp = NULL, cmp;
 
     sout = stack_init();
 
