@@ -262,6 +262,13 @@ int point_cmpEuDistance(const void *p1, const void *p2)
 }
 
 Bool point_getVisited(const Point *p){
-
+    if (!p) return FALSE;
+  return p->visited;
 }      
-Status point_setVisited(Point *p, Bool bol); /* DFS (P2) *
+
+Status point_setVisited(Point *p, Bool bol){
+  if (!p) return ERROR;
+  
+    p->visited = bol;
+    return OK;
+}
