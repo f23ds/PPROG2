@@ -230,7 +230,7 @@ int point_cmpEuDistance(const void *p1, const void *p2)
 {
     Point *point1, *point2, *origen;
     double dist1, dist2 = 0.0;
-    
+
     /* Comprobamos los punteros */
     if (p1 == NULL || p2 == NULL)
     {
@@ -258,17 +258,20 @@ int point_cmpEuDistance(const void *p1, const void *p2)
         return -1;
 
     point_free(origen);
-
 }
 
-Bool point_getVisited(const Point *p){
-    if (!p) return FALSE;
-  return p->visited;
-}      
+Bool point_getVisited(const Point *p)
+{
+    if (!p)
+        return FALSE;
+    return p->visited;
+}
 
-Status point_setVisited(Point *p, Bool bol){
-  if (!p) return ERROR;
-  
+Status point_setVisited(Point *p, Bool bol)
+{
+    if (!p)
+        return ERROR;
+
     p->visited = bol;
     return OK;
 }

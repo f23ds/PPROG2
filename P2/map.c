@@ -324,7 +324,7 @@ int map_print(FILE *pf, Map *mp)
 
 Point *map_dfs(FILE *pf, Map *mp)
 {
-    Point *p = NULL, *input, *output, *neighbors[NUM_NEIGHBORS];
+    Point *p = NULL, *input, *output, *aux = NULL;
     Stack *s;
     Bool cmp;
     int i;
@@ -334,7 +334,7 @@ Point *map_dfs(FILE *pf, Map *mp)
         return NULL;
 
     input = map_getInput(mp);
-    output = map_getoutput(mp);
+    output = map_getOutput(mp);
 
     /* Inicializamos la pila */
     s = stack_init();
@@ -353,14 +353,23 @@ Point *map_dfs(FILE *pf, Map *mp)
         if (!point_getVisited(p))
         {
             point_setVisited(p, TRUE);
+            point_print(pf, p);
             /* Llenamos la array de vecinos */
             for (i = 0; i < NUM_NEIGHBORS; i++)
             {
-                neighbors[i] = map_getNeighbor(mp, p, i);
+                aux = map_getNeighbor(mp, p, i);
                 /* Si es visitado, lo añadimos a la pila */
-                if (!point_getVisited(neighbors[i]))
+                if (point_getSymbol(aux) != BARRIER)
                 {
-                    stack_push(s, neighbors[i]);
+                    if (point_equal(aux, output))
+                    {
+                        point_print(pf, aux);
+                        return aux;
+                    }
+                    else if (!point_getVisited(aux))
+                    {
+                        stack_push(s, aux);
+                    }
                 }
             }
         }

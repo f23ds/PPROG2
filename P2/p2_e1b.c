@@ -87,7 +87,6 @@ int main(int argc, char **argv)
     if (!sin)
         return 1;
 
-    /* TODO: MIRAR SI LA PILA ESTÁ LLENA */
     for (i = 0; i < n; i++)
     {
         stack_push(sin, p[i]);
