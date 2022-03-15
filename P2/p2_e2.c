@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     /* Comprobamos que hay el número correcto de argumentos en la command line */
     if (argc != 2)
     {
-        printf("Error en la ejecución. Debe ser del tipo: './p1_e3 laberinto_1.txt'\n");
+        printf("Error en la ejecución. Debe ser del tipo: './p2_e2 laberinto_1.txt'\n");
         return -1;
     }
 
