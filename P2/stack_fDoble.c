@@ -51,19 +51,24 @@ Stack *stack_init()
     Stack *s = NULL;
     int i;
 
+    /* Creamos la stack */
     s = (Stack *)malloc(sizeof(Stack));
     if (s == NULL)
         return NULL;
 
+    /* Inicializamos la capacidad */
     s->capacity = INIT_CAPACITY;
 
-    *(s->items) = malloc(s->capacity * sizeof(void));
+    /* Reservamos memoria para el global pointer de items */
+    s->items = (void **)calloc(s->capacity, sizeof(void *));
 
+    /* Reservamos memoria para cada uno de los punteros hijos */
     for (i = 0; i < s->capacity; i++)
     {
-        s->items[i] = NULL;
+        s->items[i] = (void *)calloc(s->capacity, sizeof(void));
     }
 
+    /* Inicializamos el top */
     s->top = -1;
     return s;
 }
@@ -78,6 +83,14 @@ void stack_free(Stack *s)
 
     if (s == NULL)
         return NULL;
+
+    for (i = 0; i < s->capacity; i++)
+    {
+        free(s->items[i]);
+    }
+
+    free(s->items);
+    free(s);
 }
 
 /**
