@@ -39,38 +39,11 @@ Stack *stack_order(Stack *sin, int (*f_cmp)(const void *, const void *))
     return sout;
 }
 
-Stack *add_nums(Stack *s_nums)
+int int_print(FILE *pf, const void *a)
 {
-    int *tmp;
-    Stack *sout;
-
-    if (!s_nums)
-        return NULL;
-
-    sout = stack_init();
-
-    if (!sout)
-        return NULL;
-
-    while (!stack_isEmpty(s_nums))
-    {
-        tmp = stack_pop(s_nums);
-        stack_push(sout, tmp);
-    }
-
-    return sout;
-}
-
-int num_print(FILE *pf, const void *p)
-{
-    int *num;
-
-    if (!pf || !p)
+    if (!pf || !a)
         return -1;
-
-    num = (int *)p;
-
-    return fprintf(pf, "%i", *num);
+    return fprintf(pf, "%d", *(int *)a);
 }
 
 int int_cmp(const void *c1, const void *c2)
@@ -116,12 +89,12 @@ int main(int argc, char **argv)
 
     /* Imprimimos los números antes y después de ordenarlos */
     fprintf(stdout, "Original stack: \n");
-    stack_print(stdout, s, num_print);
+    stack_print(stdout, s, int_print);
 
     sout = stack_order(s, int_cmp);
 
     fprintf(stdout, "Sorted stack: \n");
-    stack_print(stdout, sout, num_print);
+    stack_print(stdout, sout, int_print);
 
     return 0;
 }

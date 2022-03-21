@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 #include "types.h"
+#include "limits.h"
 #include "stack_fDoble.h"
 
 #define INIT_CAPACITY 2
@@ -29,27 +30,18 @@ struct _Stack
     int top;
     int capacity;
 };
-/**
- * @brief Structure to implement a stack. To be defined in stack_fp.c
- *
- **/
+
 typedef struct _Stack Stack;
 
-/**
- * @brief Typedef for a function pointer to print a stack element at stream
- **/
 typedef int (*P_stack_ele_print)(FILE *, const void *);
 
-/**
- * @brief This function initializes an empty stack.
- *
- * @return   This function returns a pointer to the stack or a null pointer
- * if insufficient memory is available to create the stack.
- *  */
+Bool stack_isEmpty(const Stack *s);
+Bool _stack_isFull(const Stack *s);
+size_t stack_size(const Stack *s);
+
 Stack *stack_init()
 {
     Stack *s = NULL;
-    int i;
 
     /* Creamos la stack */
     s = (Stack *)malloc(sizeof(Stack));
@@ -60,75 +52,96 @@ Stack *stack_init()
     s->capacity = INIT_CAPACITY;
 
     /* Reservamos memoria para el global pointer de items */
-    s->items = (void **)calloc(s->capacity, sizeof(void *));
-
-    /* Reservamos memoria para cada uno de los punteros hijos */
-    for (i = 0; i < s->capacity; i++)
-    {
-        s->items[i] = (void *)calloc(s->capacity, sizeof(void));
-    }
+    s->items = (void **)calloc(INIT_CAPACITY, sizeof(void *));
 
     /* Inicializamos el top */
     s->top = -1;
     return s;
 }
 
-/**
- * @brief  This function frees the memory used by the stack.
- * @param s A pointer to the stack
- *  */
 void stack_free(Stack *s)
 {
-    int i;
-
-    if (s == NULL)
-        return NULL;
-
-    for (i = 0; i < s->capacity; i++)
-    {
-        free(s->items[i]);
-    }
-
+    /* Liberamos el global pointer */
     free(s->items);
+    /* Liberamos la stack */
     free(s);
 }
 
-/**
- * @brief This function is used to insert a element at the top of the stack.
- *
- * A reference of the element is added to the stack container and the size of the stack is increased by 1.
- * Time complexity: O(1). This function reallocate the stack capacity when it is full.
- * @param s A pointer to the stack.
- * @param ele A pointer to the element to be inserted
- * @return This function returns OK on success or ERROR if the stack is full.
- *  */
-Status stack_push(Stack *s, const void *ele);
+Status stack_push(Stack *s, const void *ele)
+{
+    size_t size;
+    if (s == NULL || ele == NULL)
+        return ERROR;
 
-/**
- * @brief  This function is used to extract a element from the top of the stack.
- *
- * The size of the stack is decreased by 1. Time complexity: O(1).
- * @param s A pointer to the stack.
- * @return This function returns a pointer to the extracted element on success
- * or null when the stack is empty.
- * */
-void *stack_pop(Stack *s);
 
-/**
- * @brief  This function is used to reference the top (or the newest) element of the stack.
- *
- * @param s A pointer to the stack.
- * @return This function returns a pointer to the newest element of the stack.
- * */
-void *stack_top(const Stack *s);
+    /* Si la stack no está llena realizamos el procedimiento habitual */
+    if (_stack_isFull(s) == FALSE)
+    {
+        s->top++;
+        s->items[s->top] = (void *) ele;
+        return OK;
+    }
+    else
+    {
+        size = stack_size(s);
+        /* Comprobación de errores */
+        if (!size)
+            return ERROR;
 
-/**
- * @brief Returns whether the stack is empty
- * @param s A pointer to the stack.
- * @return TRUE or FALSE
- */
-Bool stack_isEmpty(const Stack *s);
+        /* Reallocamos memoria dinámicamente */
+        if ((s = (Stack *)realloc(s, size * FCT_CAPACITY)) == NULL)
+            return ERROR;
+        s->top++;
+        s->items[s->top] = (void *) ele;
+        return OK;
+    }
 
+    return OK;
+}
+
+void *stack_pop(Stack *s)
+{
+    void *e = NULL;
+
+    if (s == NULL || stack_isEmpty(s))
+        return NULL;
+
+    e = s->items[s->top];
+    s->items[s->top] = NULL;
+    s->top--;
+
+    return e;
+}
+
+void *stack_top(const Stack *s)
+{
+    if (s == NULL || stack_isEmpty(s))
+        return NULL;
+
+    return s->items[s->top];
+}
+
+Bool stack_isEmpty(const Stack *s)
+{
+    if (s == NULL)
+        return TRUE;
+
+    if (s->top == -1)
+        return TRUE;
+
+    return FALSE;
+}
+
+Bool _stack_isFull(const Stack *s)
+{
+    if (s == NULL)
+        return TRUE;
+
+    if (s->top == s->capacity - 1)
+        return TRUE;
+
+    return FALSE;
+}
 /**
  * @brief This function returns the size of the stack.
  *
@@ -136,7 +149,17 @@ Bool stack_isEmpty(const Stack *s);
  * @param s A pointer to the stack.
  * @return the size
  */
-size_t stack_size(const Stack *s);
+size_t stack_size(const Stack *s)
+{
+    size_t size;
+
+    if (s == NULL)
+        return 0;
+
+    size = s->capacity * sizeof(Stack);
+
+    return size;
+}
 
 /**
  * @brief  This function writes the elements of the stack to the stream.
@@ -145,6 +168,27 @@ size_t stack_size(const Stack *s);
  * @return Upon successful return, these function returns the number of characters writted.
  * The function returns a negative value if there was a problem writing to the file.
  *  */
-int stack_print(FILE *fp, const Stack *s, P_stack_ele_print f);
+int stack_print(FILE *fp, const Stack *s, P_stack_ele_print f)
+{
+    int t, print = 0;
+    void *ele = NULL;
+
+    if (fp == NULL || s == NULL)
+        return INT_MIN;
+
+    if (stack_isEmpty(s) == TRUE)
+        return INT_MIN;
+
+    t = s->top;
+
+    while (t >= 0)
+    {
+        ele = s->items[t];
+        print += f(fp, ele);
+        t--;
+    }
+
+    return print;
+}
 
 #endif /* STACK_FDOBLE_H */

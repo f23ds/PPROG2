@@ -85,6 +85,12 @@ int main(int argc, char **argv)
         }
     }
 
+    /* Liberamos todos los puntos */
+    for (i = 0; i < n; i++)
+    {
+        point_free(p[i]);
+    }
+
     point_free(origen);
 
     return 0;
