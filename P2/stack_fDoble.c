@@ -15,10 +15,6 @@ struct _Stack
     int capacity;
 };
 
-typedef struct _Stack Stack;
-
-typedef int (*P_stack_ele_print)(FILE *, const void *);
-
 Bool stack_isEmpty(const Stack *s);
 Bool _stack_isFull(const Stack *s);
 size_t stack_size(const Stack *s);
