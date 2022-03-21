@@ -15,10 +15,6 @@ struct _Stack
     int capacity;
 };
 
-Bool stack_isEmpty(const Stack *s);
-Bool _stack_isFull(const Stack *s);
-size_t stack_size(const Stack *s);
-
 Stack *stack_init()
 {
     Stack *s = NULL;
