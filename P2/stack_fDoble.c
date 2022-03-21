@@ -126,13 +126,7 @@ Bool _stack_isFull(const Stack *s)
 
     return FALSE;
 }
-/**
- * @brief This function returns the size of the stack.
- *
- * Time complexity: O(1).
- * @param s A pointer to the stack.
- * @return the size
- */
+
 size_t stack_size(const Stack *s)
 {
     size_t size;
