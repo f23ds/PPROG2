@@ -167,5 +167,3 @@ int stack_print(FILE *fp, const Stack *s, P_stack_ele_print f)
 
     return print;
 }
-
-#endif /* STACK_FDOBLE_H */
