@@ -100,6 +100,7 @@ Status point_setCoordinateX(Point *p, int x)
     return OK;
 }
 
+
 Status point_setCoordinateY(Point *p, int y)
 {
     if (p == NULL)
@@ -208,7 +209,7 @@ Status point_euDistance(const Point *p1, const Point *p2, double *distance)
 {
     int x1, x2, y1, y2, x, y;
 
-    /* Checkeamos los punteros */
+    /* Chequeamos los punteros */
     if (!p1 || !p2 || !distance)
         return ERROR;
 
@@ -245,21 +246,24 @@ int point_cmpEuDistance(const void *p1, const void *p2)
 
     point_euDistance(point1, origen, &dist1);
     point_euDistance(point2, origen, &dist2);
+    
+    point_free(origen);
+    
 
     if (dist1 == dist2)
     {
-        return 0;
+        
+         return 0;
     }
     else if (dist1 > dist2)
-    {
-        return 1;
+    {   
+       return 1;
     }
     else
+    {
         return -1;
+    }
 
-    point_free(point1);
-    point_free(point2);
-    point_free(origen);
 }
 
 Bool point_getVisited(const Point *p)

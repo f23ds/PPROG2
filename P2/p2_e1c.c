@@ -56,7 +56,7 @@ int int_cmp(const void *c1, const void *c2)
 int main(int argc, char **argv)
 {
     Stack *s, *sout;
-    int nums[MAX_NUMS], n, i, *tmp = NULL;
+    int nums[MAX_NUMS], n, i, *tmp = NULL, tam;
 
     /* Comprobamos la command line */
     if (argc < 2)
@@ -89,12 +89,28 @@ int main(int argc, char **argv)
 
     /* Imprimimos los números antes y después de ordenarlos */
     fprintf(stdout, "Original stack: \n");
+    fprintf(stdout, "SIZE:% d\n", n);
     stack_print(stdout, s, int_print);
 
     sout = stack_order(s, int_cmp);
+    
+    if(!sout)
+    {
+      stack_free(s);
+      return 1;
+    }
 
-    fprintf(stdout, "Sorted stack: \n");
+    fprintf(stdout, "Ordered stack: \n");
+    fprintf(stdout, "SIZE:% d\n", n);
     stack_print(stdout, sout, int_print);
+    
+    fprintf(stdout, "Original stack: \n");
+    tam = stack_size(s);
+    fprintf(stdout, "SIZE:%d\n", tam+1);
+    stack_print(stdout, s, int_print);
+    
+    stack_free(sout);
+    stack_free(s);
 
     return 0;
 }

@@ -40,8 +40,15 @@ int main(int argc, char **argv)
 
     fprintf(stdout, "\n");
 
-    if (!p)
+    if (!p){
+    
+        map_free(map);
         return 1;
+    }
+    
+    map_free(map);
+    point_free(p);
+   
 
     return 0;
 }

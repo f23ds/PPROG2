@@ -1,8 +1,6 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
-#include "types.h"
-#include "limits.h"
 #include "stack_fDoble.h"
 
 #define INIT_CAPACITY 2
@@ -28,10 +26,17 @@ Stack *stack_init()
     s->capacity = INIT_CAPACITY;
 
     /* Reservamos memoria para el global pointer de items */
-    s->items = (void **)calloc(INIT_CAPACITY, sizeof(void *));
+    s->items = malloc(sizeof (void*)*INIT_CAPACITY);
+    
+    if(s->items == NULL)
+    {
+     free(s);
+     return NULL;
+     }
 
     /* Inicializamos el top */
     s->top = -1;
+    
     return s;
 }
 
@@ -45,35 +50,27 @@ void stack_free(Stack *s)
 
 Status stack_push(Stack *s, const void *ele)
 {
-    size_t size;
+    void *p_aux = NULL;
+    
     if (s == NULL || ele == NULL)
         return ERROR;
 
 
-    /* Si la stack no está llena realizamos el procedimiento habitual */
-    if (_stack_isFull(s) == FALSE)
+    if (_stack_isFull(s))
     {
+        p_aux = realloc(s->items, FCT_CAPACITY * s->capacity * sizeof(void*));
+        
+        if(p_aux==NULL) return ERROR;
+       
+        s->items = p_aux;
+        s->capacity = s->capacity * FCT_CAPACITY;
+        }
+        
         s->top++;
-        s->items[s->top] = (void *) ele;
+        s->items[s->top] = (void*) ele;
+        
         return OK;
-    }
-    else
-    {
-        size = stack_size(s);
-        /* Comprobación de errores */
-        if (!size)
-            return ERROR;
-
-        /* Reallocamos memoria dinámicamente */
-        if ((s = (Stack *)realloc(s, size * FCT_CAPACITY)) == NULL)
-            return ERROR;
-        s->top++;
-        s->items[s->top] = (void *) ele;
-        return OK;
-    }
-
-    return OK;
-}
+ }
 
 void *stack_pop(Stack *s)
 {
@@ -121,33 +118,25 @@ Bool _stack_isFull(const Stack *s)
 
 size_t stack_size(const Stack *s)
 {
-    size_t size;
 
-    if (s == NULL)
-        return 0;
+    if (s == NULL) return 0;
 
-    size = s->capacity * sizeof(Stack);
-
-    return size;
-}
+    return s->top;
+ }
 
 int stack_print(FILE *fp, const Stack *s, P_stack_ele_print f)
 {
     int t, print = 0;
-    void *ele = NULL;
 
-    if (fp == NULL || s == NULL)
-        return INT_MIN;
+    if (fp == NULL || s == NULL) return INT_MIN;
 
-    if (stack_isEmpty(s) == TRUE)
-        return INT_MIN;
 
     t = s->top;
 
-    while (t >= 0)
+    while (t > -1)
     {
-        ele = s->items[t];
-        print += f(fp, ele);
+        print += f(fp, s->items[t]);
+        fprintf(stdout, "\n");
         t--;
     }
 

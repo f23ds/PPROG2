@@ -3,7 +3,7 @@
   Número de grupo:4
   Nombres: Fabio Desio Suárez
            Silvia Jiménez Real
-  Fecha entrega: TODO:
+  Fecha entrega: 21/3/2022
 */
 
 /* Declaración de bibliotecas públicas */
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         p[i] = point_new(rand() % MAX_RAND, rand() % MAX_RAND,
                          BARRIER);
 
-        /* Liberamos los puntos anteriores  en el caso de que erre la función point_new */
+        /* Liberamos los puntos anteriores  en el caso de que de error la función point_new */
         if (p[i] == NULL)
         {
             for (j = i - 1; j >= 0; j--)
@@ -59,6 +59,7 @@ int main(int argc, char **argv)
             return 1;
         }
 
+        fprintf(stdout,"Point p[%d]=",i);
         point_print(stdout, p[i]);
         point_euDistance(p[i], origen, &d);
         fprintf(stdout, " distance: %f\n", d);
@@ -67,11 +68,17 @@ int main(int argc, char **argv)
     /* Comparamos las distancias euclídeas para todos los pares de puntos */
     for (i = 0; i < n; i++)
     {
-        for (j = 0; j < n; j++)
+        for (j = i; j < n; j++)
         {
             cmp = point_cmpEuDistance(p[i], p[j]);
             if (cmp == INT_MIN)
             {
+                 for (i = 0; i < n; i++)
+                {
+                 point_free(p[i]);
+                  }   
+
+                 point_free(origen);
                 return 1;
             }
             else if (cmp == -1)

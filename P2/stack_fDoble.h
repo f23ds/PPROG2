@@ -96,4 +96,6 @@ size_t stack_size(const Stack *s);
  *  */
 int stack_print(FILE *fp, const Stack *s, P_stack_ele_print f);
 
+Bool _stack_isFull(const Stack *s);
+
 #endif /* STACK_FDOBLE_H */

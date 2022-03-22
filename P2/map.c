@@ -346,11 +346,11 @@ Point *map_dfs(FILE *pf, Map *mp)
     stack_push(s, input);
 
     /* El bucle debe parar cuando el punto sea igual que el output */
-    cmp = point_equal(p, output);
-    while (!cmp && !stack_isEmpty(s))
+    
+    while (!stack_isEmpty(s))
     {
         p = stack_pop(s);
-        if (!point_getVisited(p))
+        if (point_getVisited(p)==FALSE)
         {
             point_setVisited(p, TRUE);
             point_print(pf, p);
@@ -364,9 +364,10 @@ Point *map_dfs(FILE *pf, Map *mp)
                     if (point_equal(aux, output))
                     {
                         point_print(pf, aux);
+                        stack_free(s);
                         return aux;
                     }
-                    else if (!point_getVisited(aux))
+                    else if (point_getVisited(aux)==FALSE)
                     {
                         stack_push(s, aux);
                     }
@@ -374,11 +375,13 @@ Point *map_dfs(FILE *pf, Map *mp)
             }
         }
     }
+    
     stack_free(s);
 
     cmp = point_equal(p, output);
     if (cmp)
         return p;
+    
 
     return NULL;
 }
