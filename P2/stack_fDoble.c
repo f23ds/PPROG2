@@ -1,19 +1,3 @@
-/**
- * @file  stack_fDoble.h
- * @author Prog2
- * @date 8 Mar 2021
- * @version 1.0
- * @brief Stack library
- *
- * @details Stack interface
- *
- * @see http://www.stack.nl/~dimitri/doxygen/docblocks.html
- * @see http://www.stack.nl/~dimitri/doxygen/commands.html
- */
-
-#ifndef STACK_FDOBLE_H
-#define STACK_FDOBLE_H
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -30,14 +14,6 @@ struct _Stack
     int top;
     int capacity;
 };
-
-typedef struct _Stack Stack;
-
-typedef int (*P_stack_ele_print)(FILE *, const void *);
-
-Bool stack_isEmpty(const Stack *s);
-Bool _stack_isFull(const Stack *s);
-size_t stack_size(const Stack *s);
 
 Stack *stack_init()
 {
@@ -142,13 +118,7 @@ Bool _stack_isFull(const Stack *s)
 
     return FALSE;
 }
-/**
- * @brief This function returns the size of the stack.
- *
- * Time complexity: O(1).
- * @param s A pointer to the stack.
- * @return the size
- */
+
 size_t stack_size(const Stack *s)
 {
     size_t size;
@@ -161,13 +131,6 @@ size_t stack_size(const Stack *s)
     return size;
 }
 
-/**
- * @brief  This function writes the elements of the stack to the stream.
- * @param fp A pointer to the stream
- * @param s A pointer to the element to the stack
- * @return Upon successful return, these function returns the number of characters writted.
- * The function returns a negative value if there was a problem writing to the file.
- *  */
 int stack_print(FILE *fp, const Stack *s, P_stack_ele_print f)
 {
     int t, print = 0;
@@ -190,5 +153,3 @@ int stack_print(FILE *fp, const Stack *s, P_stack_ele_print f)
 
     return print;
 }
-
-#endif /* STACK_FDOBLE_H */
