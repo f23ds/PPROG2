@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-/* Bibliotecas privadas */º
+/* Bibliotecas privadas */
 #include "sorted_queue.h"
 #include "queue.h"
 #include "point.h"
@@ -14,4 +14,12 @@ coincida el prototipo con lo que espera squeue_push */
 
 int string_cmp (const void *s1, const void *s2) {
     return strcmp((char *) s1, (char *) s2);
+}
+
+int main() {
+    /* Tenemos que probar la funcionalidad del TAD SortedQueue usando 
+    números enteros, puntos y cadenas de texto */
+
+    
+
 }
