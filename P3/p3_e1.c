@@ -103,7 +103,6 @@ int main()
     }
     else
     {
-        // TODO: hay que correr los tests para cadenas
         string_test();
     }
 
