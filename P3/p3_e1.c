@@ -71,6 +71,27 @@ Status int_tests()
     {
         st = squeue_push(qf, &nums[i], int_cmp);
     }
+
+    if (st == ERROR)
+    {
+        queue_free(qi);
+        queue_free(qf);
+        return ERROR;
+    }
+
+    return st;
+}
+
+Status point_tests()
+{
+    Status st = OK;
+    return st;
+}
+
+Status string_tests()
+{
+    Status st = OK;
+    return st;
 }
 
 int main()
@@ -78,33 +99,36 @@ int main()
     /* Tenemos que probar la funcionalidad del TAD SortedQueue usando
     números enteros, puntos y cadenas de texto */
     int test = 0;
+    Status st = OK;
 
     /* Vamos a hacer que el usuario pueda elegir el tipo de tests que quiere correr */
     do
     {
         printf("Tests disponibles:\n\t(1) Números enteros\n\t(2) Puntos\n\t(3) Cadenas\n");
-        scanf("Inserte el código: ", &test);
+        printf("Inserte el código: ");
+        scanf("%d", &test);
         if (test < 1 || test > 3)
         {
-            printf("ERROR: Modo de uso incorrecto\n");
+            printf("\nERROR: Modo de uso incorrecto\n\n");
         }
     } while (test < 1 || test > 3);
 
     /* Diferenciamos los tests */
     if (test == 1)
     {
-        // TODO: hay que correr los test para numeros enteros
-        int_tests();
+        st = int_tests();
     }
     else if (test == 2)
     {
-        // TODO: hay que correr los tests para Puntos
-        point_tests();
+        st = point_tests();
     }
     else
     {
-        string_test();
+        st = string_tests();
     }
+
+    if (st == ERROR)
+        return 1;
 
     return 0;
 }

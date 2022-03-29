@@ -7,7 +7,6 @@
 
 typedef Queue SortedQueue;
 
-typedef int (*p_queue_ele_print)(FILE *, const void *);
 typedef int (*p_queue_ele_cmp)(const void *, const void *);
 
 SortedQueue *squeue_new();
