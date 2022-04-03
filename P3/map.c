@@ -362,26 +362,34 @@ Point *map_bfs(FILE *pf, Map *mp)
     /* insertamos el punto de inicio en la cola auxiliar */
     input = map_getInput(mp);
     st = queue_push(q, input);
+    point_setVisited(input, TRUE);
+    
+    
+    if (!st){
+        queue_free(q);
+        return NULL;
+    }
 
     /* Hallamos el output */
     output = map_getOutput(mp);
-
-    if (!st)
-        return NULL;
 
     /* Mientras la cola no esté vacía */
     while (queue_isEmpty(q) == FALSE)
     {
         /* Extraer el punto de la cola y marcarlo como visitado */
         ele = (Point *)queue_pop(q);
-        point_setVisited(ele, TRUE);
         
         /* Si el punto extraído es el punto de llegada, salir del bucle */
         if (point_cmp(ele, output) == 1) {
          break;   
         }
 
-        /* Si no es el de llegada, exploramos sus vecinos */
+        /* Si el punto extraido no es el punto de llegada y no ha sido
+    visitado, explorar sus vecinos */
+        
+        
+        
+        
     }
 }
 
