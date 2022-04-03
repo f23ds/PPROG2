@@ -11,3 +11,38 @@
 #include "types.h"
 
 
+int main(int argc, char **argv)
+{
+  Map *map;
+  Point *output=NULL;
+  FILE *pf;
+
+  /* Comprobamos que hay el número correcto de argumentos en la command line */
+  if (argc != 2)
+  {
+    printf("Error en la ejecución. Debe ser del tipo: './p1_e3 laberinto_1.txt'\n");
+    return -1;
+  }
+
+  /* Abrimos el archivo cuyo nombre es el segundo argumentos de la command line */
+  pf = fopen(argv[1], "r");
+
+  if (!pf)
+    return -1;
+
+  /* Inserta en el Map el laberinto del enunciado punto a punto*/
+  map = map_readFromFile(pf);
+
+  /* Imprimimos el mapa*/
+  printf("Map:\n");
+  map_print(stdout, map);
+  
+  output = map_bfs (stdout, map);
+  
+  if(output == NULL){
+    printf("Error en la ejecución del algoritmo.\n");
+  }
+  
+  map_free(map);
+  return 0;
+}
