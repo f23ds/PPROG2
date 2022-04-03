@@ -394,6 +394,7 @@ Point *map_bfs(FILE *pf, Map *mp)
     if(point_getVisited(aux)==FALSE){
     point_setVisited(aux, TRUE);
     sta=queue_push(q, aux);
+    point_print(stdout, aux);
         
      if (!st){
         queue_free(q);
@@ -401,6 +402,7 @@ Point *map_bfs(FILE *pf, Map *mp)
     }
         
     if (point_cmp(aux, output) == 1) {
+        queue_free(q);
         return output;   
      }
     }
