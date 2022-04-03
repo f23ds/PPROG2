@@ -11,7 +11,7 @@
 #include "types.h"
 
 /* Macros */
-#define MAX_RAND 23
+#define MAX_RAND 10
 #define MAX_INT 10
 
 /* Como la función de comparación utilizaremos la función string_cmp para que
@@ -27,12 +27,27 @@ int int_cmp(const void *c1, const void *c2)
     return (*(int *)c1 - *(int *)c2);
 }
 
+int int_print(FILE *pf, const void *n)
+{
+    int *aux;
+
+    if (!pf || !n)
+        return -1;
+
+    aux = (int *)n;
+
+    return fprintf(pf, "%d\t", *aux);
+}
+
+
 /* Tests para los números enteros */
 Status int_tests()
 {
     int nums[MAX_INT], i;
     Status st = OK;
     Queue *qi = NULL, *qf = NULL;
+
+    srand(time(NULL));
 
     /* Inicializamos el array de números a valores random */
     for (i = 0; i < MAX_INT; i++)
@@ -42,10 +57,11 @@ Status int_tests()
 
     /* Inicializamos las colas (la primera desordenada y la segunda ordenada) */
     qi = queue_new();
-    qf = queue_new();
 
     if (!qi)
         return ERROR;
+
+    qf = squeue_new();
 
     /* Si la segunda falla, necesitamos liberar la primera */
     if (!qf)
@@ -79,18 +95,48 @@ Status int_tests()
         return ERROR;
     }
 
+    fprintf(stdout, "Cola desordenada: \n");
+    queue_print(stdout, qi, int_print);
+    fprintf(stdout, "Cola ordenada: \n");
+    queue_print(stdout, qf, int_print);
     return st;
 }
 
 Status point_tests()
 {
     Status st = OK;
+    Queue *qi = NULL, *qf = NULL;
+
+    /* Inicializamos las colas (la primera desordenada y la segunda ordenada) */
+    qi = queue_new();
+
+    if (!qi)
+        return ERROR;
+
+    qf = squeue_new();
+
+    /* Si la segunda falla, necesitamos liberar la primera */
+    if (!qf)
+    {
+        queue_free(qi);
+        return ERROR;
+    }
+
+    fprintf(stdout, "Cola desordenada: \n");
+    queue_print(stdout, qi, int_print);
+    fprintf(stdout, "Cola ordenada: \n");
+    queue_print(stdout, qf, int_print);
     return st;
 }
 
 Status string_tests()
 {
     Status st = OK;
+
+    /*fprintf(stdout, "Cola desordenada: \n");
+    queue_print(stdout, qi, int_print);
+    fprintf(stdout, "Cola ordenada: \n");
+    queue_print(stdout, qf, int_print);*/
     return st;
 }
 

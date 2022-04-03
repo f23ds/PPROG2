@@ -4,6 +4,8 @@
 #include "map.h"
 #include "point.h"
 #include "types.h"
+#include "queue.h"
+#include "sorted_queue.h"
 
 #define MAX_NCOLS 64           /* Maximum map cols*/
 #define MAX_NROWS 64           /* Maximum map rows*/
@@ -319,4 +321,84 @@ int map_print(FILE *pf, Map *mp)
         }
     }
     return c;
+}
+
+/**
+* @brief: Makes a search from the origin point to the output point
+* of a map using the breadth-first search algorithm and the ADT
+Queue
+*
+* The function prints each visited point while traversing the map
+*   1. Inicializar una cola auxiliar.
+    2. Insertar el punto de inicio en la cola auxiliar.
+    3. Mientras la cola no este vacia:
+    3.1. Extraer un punto de la cola y marcarlo como visitado.
+    3.2. Si el punto extraido es el punto de llegada, salir del bucle.
+    3.3. Si el punto extraido no es el punto de llegada y no ha sido
+    visitado, explorar sus vecinos:
+    3.3.1. Si el vecino explorado no ha sido visitado, insertarlo en
+    la cola.
+    4. Liberar recursos
+* @param pf, File descriptor
+* @param mp, Pointer to map
+*
+* @return The function returns the output map point o NULL otherwise
+**/
+Point *map_bfs(FILE *pf, Map *mp)
+{
+    Queue *q = NULL;
+    Point *input = NULL, *output = NULL, *ele = NULL;
+    Status st = OK;
+
+    if (!pf || !mp)
+        return NULL;
+
+    /* 1. Inicializamos una cola auxiliar */
+    q = queue_new();
+
+    if (!q)
+        return NULL;
+
+    /* insertamos el punto de inicio en la cola auxiliar */
+    input = map_getInput(mp);
+    st = queue_push(q, input);
+
+    /* Hallamos el output */
+    output = map_getOutput(mp);
+
+    if (!st)
+        return NULL;
+
+    /* Mientras la cola no esté vacía */
+    while (queue_isEmpty(q) == FALSE)
+    {
+        /* Extraer el punto de la cola y marcarlo como visitado */
+        ele = (Point *)queue_pop(q);
+        point_setVisited(ele, TRUE);
+        
+        /* Si el punto extraído es el punto de llegada, salir del bucle */
+        if (point_cmp(ele, output) == 1) {
+         break;   
+        }
+
+        /* Si no es el de llegada, exploramos sus vecinos */
+    }
+}
+
+int point_cmp(const Point *p1, const Point *p2)
+{
+    int x1, x2, y1, y2;
+
+    if (!p1 || !p2)
+        return -1;
+
+    x1 = point_getCoordinateX(p1);
+    x2 = point_getCoordinateX(p2);
+    y1 = point_getCoordinateY(p1);
+    y2 = point_getCoordinateY(p2);
+
+    if (x1 == x2 && y1 == y2)
+        return 1;
+
+    return 0;
 }

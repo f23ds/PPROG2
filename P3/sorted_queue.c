@@ -2,13 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//--------------------------------------------------------------------------
 SortedQueue *squeue_new()
 {
   return queue_new();
 }
 
-//--------------------------------------------------------------------------
 void squeue_free(SortedQueue *q)
 {
   queue_free(q);
@@ -39,67 +37,64 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp)
   if (!q || !ele)
     return ERROR;
 
-  /* Mientras el elemento sea menor que el front de la cola, lo extraemos y lo añadimos al final */
-  while (pcmp(queue_getFront(q), ele) >= 0 && st == OK) {
-    aux = squeue_pop(q);
-    st = queue_push(q, aux);
+  /* Si la cola está vacía insertamos el elemento */
+  if (queue_isEmpty(q) == TRUE)
+  {
+    st = queue_push(q, ele);
+    return st;
   }
 
-  /* Control de errores */
-  if (st == ERROR) {
-    squeue_free(q);
+  if (queue_isEmpty(q) == FALSE && pcmp(ele, queue_getBack(q)) < 0 && st == OK)
+  {
+    while (pcmp(queue_getFront(q), ele) <= 0)
+    {
+      aux = queue_pop(q);
+      st = queue_push(q, aux);
+    }
+  }
+
+  if (st == ERROR)
+  {
     return ERROR;
   }
 
-  /* Ahora que hemos terminado este proceso, añadimos el elemento a la cola */
   st = queue_push(q, ele);
-   
-  /* Control de errores */
-  if (st == ERROR) {
-    squeue_free(q);
-    return ERROR;
-  }
 
-  /* Mientras que el front de la cola sea mayor o igual que el elemento a insertar, lo extraemos y lo añadimos al final de la cola */
-  while (pcmp(queue_getFront(q), ele) <= 0 && st == OK) {
-    aux = squeue_pop(q);
-    st = queue_push(q, aux);
+  if (queue_isEmpty(q) ==  FALSE && pcmp(queue_getBack(q), queue_getFront(q)) < 0 && st == OK) {
+    while (pcmp(ele, queue_getFront(q)) <0) {
+      aux = queue_pop(q);
+      st = queue_push(q, aux);  
+    }
   }
 
   return st;
 }
 
-//--------------------------------------------------------------------------
 void *squeue_pop(SortedQueue *q)
 {
   return queue_pop(q);
 }
 
-//--------------------------------------------------------------------------
 void *squeue_getFront(const SortedQueue *q)
 {
   return queue_getFront(q);
 }
 
-//--------------------------------------------------------------------------
 void *squeue_getBack(const SortedQueue *q)
 {
   return queue_getBack(q);
 }
 
-//--------------------------------------------------------------------------
 Bool squeue_isEmpty(const SortedQueue *q)
 {
   return queue_isEmpty(q);
 }
 
-//--------------------------------------------------------------------------
 size_t squeue_size(const SortedQueue *q)
 {
   return queue_size(q);
 }
 
-//--------------------------------------------------------------------------
 int squeue_print(FILE *fp, const SortedQueue *q, p_queue_ele_print f)
 {
   return queue_print(fp, q, f);
