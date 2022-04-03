@@ -347,8 +347,9 @@ Queue
 Point *map_bfs(FILE *pf, Map *mp)
 {
     Queue *q = NULL;
-    Point *input = NULL, *output = NULL, *ele = NULL;
+    Point *input = NULL, *output = NULL, *ele = NULL, *aux=NULL;
     Status st = OK;
+    Position pos;
 
     if (!pf || !mp)
         return NULL;
@@ -361,9 +362,7 @@ Point *map_bfs(FILE *pf, Map *mp)
 
     /* insertamos el punto de inicio en la cola auxiliar */
     input = map_getInput(mp);
-    st = queue_push(q, input);
-    point_setVisited(input, TRUE);
-    
+    st = queue_push(q, input); 
     
     if (!st){
         queue_free(q);
@@ -387,8 +386,27 @@ Point *map_bfs(FILE *pf, Map *mp)
         /* Si el punto extraido no es el punto de llegada y no ha sido
     visitado, explorar sus vecinos */
         
+        for (pos = 0; pos < NUM_VECINOS; pos++)
+  {
+
+    aux = map_getNeighbor(map, ele, pos);
+    
+    if(point_getVisited(aux)==FALSE){
+    point_setVisited(aux, TRUE);
+    sta=queue_push(q, aux);
         
+     if (!st){
+        queue_free(q);
+        return NULL;
+    }
         
+    if (point_cmp(aux, output) == 1) {
+        return output;   
+     }
+    }
+    
+    
+  }    
         
     }
 }
