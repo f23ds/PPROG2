@@ -392,7 +392,7 @@ Point *map_bfs(FILE *pf, Map *mp)
 
             else
             {
-                for (pos = 2; pos < 4; pos++)
+                for (pos = 0; pos < 4; pos++)
                 {
                     aux = map_getNeighbor(mp, ele, pos);
 
