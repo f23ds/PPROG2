@@ -28,6 +28,7 @@ Point *point_new(int x, int y, char symbol)
         point->x = x;
         point->y = y;
         point->symbol = symbol;
+        point->visited = FALSE;
     }
 
     return point;

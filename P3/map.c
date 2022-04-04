@@ -347,9 +347,10 @@ Queue
 Point *map_bfs(FILE *pf, Map *mp)
 {
     Queue *q = NULL;
-    Point *input = NULL, *output = NULL, *ele = NULL, *aux=NULL;
+    Point *input = NULL, *output = NULL, *ele = NULL, *aux = NULL;
     Status st = OK;
     Position pos;
+    int f = 0;
 
     if (!pf || !mp)
         return NULL;
@@ -360,11 +361,13 @@ Point *map_bfs(FILE *pf, Map *mp)
     if (!q)
         return NULL;
 
-    /* insertamos el punto de inicio en la cola auxiliar */
+    /* Insertamos input en la cola auxiliar */
     input = map_getInput(mp);
-    st = queue_push(q, input); 
-    
-    if (!st){
+
+    st = queue_push(q, input);
+
+    if (!st)
+    {
         queue_free(q);
         return NULL;
     }
@@ -373,44 +376,49 @@ Point *map_bfs(FILE *pf, Map *mp)
     output = map_getOutput(mp);
 
     /* Mientras la cola no esté vacía */
-    while (queue_isEmpty(q) == FALSE)
+    while ((queue_isEmpty(q)) == FALSE && (f == 0))
     {
         /* Extraer el punto de la cola y marcarlo como visitado */
         ele = (Point *)queue_pop(q);
-        
-        /* Si el punto extraído es el punto de llegada, salir del bucle */
-        if (point_cmp(ele, output) == 1) {
-         break;   
+
+        /* Si el punto extraido no es el punto de llegada y no ha sido visitado, explorar sus vecinos */
+        if (point_getVisited(ele) == FALSE)
+        {
+            point_print(pf, ele);
+            point_setVisited(ele, TRUE);
+
+            if (point_cmp(ele, output) == 1)
+                f = 1;
+
+            else
+            {
+                for (pos = 2; pos < 4; pos++)
+                {
+                    aux = map_getNeighbor(mp, ele, pos);
+
+                    if (!aux)
+                    {
+                        queue_free(q);
+                        return NULL;
+                    }
+
+                    if (point_getVisited(aux) == FALSE && point_getSymbol(aux) != BARRIER)
+                    {
+
+                        st = queue_push(q, aux);
+
+                        if (!st)
+                        {
+                            queue_free(q);
+                            return NULL;
+                        }
+                    }
+                }
+            }
         }
-
-        /* Si el punto extraido no es el punto de llegada y no ha sido
-    visitado, explorar sus vecinos */
-        
-        for (pos = 0; pos < NUM_VECINOS; pos++)
-  {
-
-    aux = map_getNeighbor(map, ele, pos);
-    
-    if(point_getVisited(aux)==FALSE){
-    point_setVisited(aux, TRUE);
-    sta=queue_push(q, aux);
-    point_print(pf, aux);
-        
-     if (!st){
-        queue_free(q);
-        return NULL;
     }
-        
-    if (point_cmp(aux, output) == 1) {
-        queue_free(q);
-        return output;   
-     }
-    }
-    
-    
-  }    
-        
-    }
+    queue_free(q);
+    return output;
 }
 
 int point_cmp(const Point *p1, const Point *p2)
