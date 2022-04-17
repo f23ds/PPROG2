@@ -4,11 +4,11 @@ LDLIBS=-lqueue
 
 all: p3_e2
 
-p3_e1: p3_e1.o point.o sorted_queue.o 
-	$(CC) p3_e1.o point.o sorted_queue.o  $(LDFLAGS) $(LDLIBS) -lm -g -o p3_e1
+p3_e1: p3_e1.o point.o queue.o list.o 
+	$(CC) p3_e1.o point.o queue.o list.o  $(LDFLAGS) $(LDLIBS) -lm -g -o p3_e1
 	
-p3_e2: p3_e2.o point.o sorted_queue.o map.o
-	$(CC) p3_e2.o point.o sorted_queue.o map.o $(LDFLAGS) $(LDLIBS) -lm -g -o p3_e2
+p3_e2: p3_e2.o point.o queue.o list.o map.o
+	$(CC) p3_e2.o point.o queue.o list.o map.o $(LDFLAGS) $(LDLIBS) -lm -g -o p3_e2
 
 point.o: point.c point.h types.h
 	$(CC) -ansi -pedantic -Wall -g -c point.c
@@ -24,3 +24,9 @@ p3_e2.o: p3_e2.c point.h types.h map.h
 
 sorted_queue.o: sorted_queue.c types.h queue.h
 	$(CC) -ansi -pedantic -Wall -g -c sorted_queue.c
+
+list.o: list.c types.h 
+	$(CC) -ansi -pedantic -Wall -g -c list.c
+
+queue.o: queue.c types.h 
+	$(CC) -ansi -pedantic -Wall -g -c queue.c

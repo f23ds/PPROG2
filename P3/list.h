@@ -17,6 +17,9 @@
  */
 typedef struct _List List;
 
+typedef struct _Node Node;
+
+
 /**
  * p_list_ele_print type definition: pointer to a function that prints a
  * List element to an output stream. It is assumed that this function returns:

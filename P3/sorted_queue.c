@@ -34,7 +34,7 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp)
   void *aux = NULL;
 
   /* Comprobamos los punteros */
-  if (!q || !ele)
+  if (!q || !ele || !pcmp)
     return ERROR;
 
   /* Si la cola está vacía insertamos el elemento */
@@ -46,6 +46,7 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp)
 
   if (queue_isEmpty(q) == FALSE && pcmp(ele, queue_getBack(q)) < 0 && st == OK)
   {
+    // TODO: TENER EN CUENTA EL SIZE
     while (pcmp(queue_getFront(q), ele) <= 0)
     {
       aux = queue_pop(q);
