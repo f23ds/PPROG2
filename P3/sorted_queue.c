@@ -15,12 +15,22 @@ void squeue_free(SortedQueue *q)
 /**
  * @brief  Inserta un elemento en la cola ordenada.
  *
- * TODO: Incluye aqui el pseudocodigo del algoritmo implementado.
+ * Incluye aqui el pseudocodigo del algoritmo implementado.
  * @pseudocodigo
- *
- *
- *
- *
+ *Si q o ele o pcmp son NULL
+   dev error
+ *queue_empty(q) = TRUE 
+  queue_push(ele)
+  dev OK
+ *Si pcmp(front,ele)<0 
+   mientras pcmp(back,ele)<=0 y tam(q)<x
+   queue_push(queue_pop(q))
+   x+1
+   Si com(back,front)<0
+ * mientras pcmp(back,front)<0
+   queue_push(queue_pop(q))
+   
+   dev 0K
  *
  * @param q, puntero a la cola.
  * @param ele, puntero al elemento a insertar.
@@ -45,7 +55,7 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp)
     return st;
   }
 
-  if (queue_isEmpty(q) == FALSE && pcmp(ele, queue_getBack(q)) < 0 && st == OK)
+  if (pcmp(ele, queue_getBack(q)) < 0 && st == OK)
   {
     x=0;
     while (pcmp(queue_getFront(q), ele) <= 0 && queue_size(q)>x )
