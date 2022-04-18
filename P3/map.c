@@ -387,7 +387,7 @@ Point *map_bfs(FILE *pf, Map *mp)
             point_print(pf, ele);
             point_setVisited(ele, TRUE);
 
-            if (point_cmp(ele, output) == 1)
+            if (point_equal(ele, output) == TRUE)
                 f = 1;
 
             else
@@ -409,8 +409,7 @@ Point *map_bfs(FILE *pf, Map *mp)
 
                         if (!st)
                         {
-                            queue_free(q);
-                            return NULL;
+                            f=1;
                         }
                     }
                 }
@@ -421,20 +420,3 @@ Point *map_bfs(FILE *pf, Map *mp)
     return output;
 }
 
-int point_cmp(const Point *p1, const Point *p2)
-{
-    int x1, x2, y1, y2;
-
-    if (!p1 || !p2)
-        return -1;
-
-    x1 = point_getCoordinateX(p1);
-    x2 = point_getCoordinateX(p2);
-    y1 = point_getCoordinateY(p1);
-    y2 = point_getCoordinateY(p2);
-
-    if (x1 == x2 && y1 == y2)
-        return 1;
-
-    return 0;
-}
