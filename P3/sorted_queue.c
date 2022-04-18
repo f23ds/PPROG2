@@ -48,10 +48,11 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp)
   if (queue_isEmpty(q) == FALSE && pcmp(ele, queue_getBack(q)) < 0 && st == OK)
   {
     x=0;
-    while (pcmp(queue_getFront(q), ele) <= 0 && )
+    while (pcmp(queue_getFront(q), ele) <= 0 && queue_size(q)>x )
     {
       aux = queue_pop(q);
       st = queue_push(q, aux);
+      x++;
     }
   }
 
