@@ -63,6 +63,34 @@ int str_print(FILE *f, const void *x) {
 }
 
 /* Tests para los números enteros */
+void test_interleave(void *test[], void *sol[], pprint p) {
+  Queue *q;
+  int i, n;
+  // Trick: Access position -1 to get the number of elements in the array
+  // (see comments in run_tests_interleave)
+  int n = 10;
+
+  // Create queue:
+  q = queue_new();
+  if (!q) {
+    return;
+  }
+  
+  // Insert data into queue:
+  for (i=0; i<n; i++) {
+    queue_push(q, test[i]);
+  }
+
+  // Interleave elements:
+  q = interleave(q);
+  
+  // Print results:
+  print_report(q, sol, p);
+  
+  // Free resources:
+  queue_free(q);
+  queue_free(qinter);
+}
 Status int_tests()
 {
     int nums[MAX_INT], i;
@@ -199,31 +227,31 @@ void run_tests_interleave() {
   void *s1[] = {ct(8), ct(1), ct(5), ct(2), ct(6), ct(3), ct(7), ct(4), ct(8)};
   fprintf(stdout, "-----------------------------------------------------------\n");
   fprintf(stdout, "TEST 1 (strings):\n");
-  test_interleave(t1+1, s1+1, (&int_print));
+  int_tests(t1+1, s1+1, (&int_print));
 
   void *t2[] = {ct(7), ct(3), ct(4), ct(5), ct(6), ct(7), ct(8), ct(9)};
   void *s2[] = {ct(7), ct(3), ct(7), ct(4), ct(8), ct(5), ct(9), ct(6)};
   fprintf(stdout, "-----------------------------------------------------------\n");
   fprintf(stdout, "TEST 2 (strings):\n");
-  test_interleave(t2+1, s2+1, (&int_print));
+  int_tests(t2+1, s2+1, (&int_print));
 
   void *t3[] = {ct(6), "A", "B", "C", "D", "E", "F"};
   void *s3[] = {ct(6), "A", "B", "C", "D", "E", "F"};
   fprintf(stdout, "-----------------------------------------------------------\n");
   fprintf(stdout, "TEST 3 (strings):\n");
-  test_interleave(t3+1, s3+1, (&str_print));
+  string_tests(t3+1, s3+1, (&str_print));
 
   void *t4[] = {ct(5), "A", "D", "C", "L", "U"};
   void *s4[] = {ct(5), "A", "C", "D", "L", "U"};
   fprintf(stdout, "-----------------------------------------------------------\n");
   fprintf(stdout, "TEST 4 (interleave):\n");
-  test_interleave(t4+1, s4+1, (&str_print));
+  string_tests(t4+1, s4+1, (&str_print));
 
   void *t5[] = {ct(0)};
   void *s5[] = {ct(0)};
   fprintf(stdout, "-----------------------------------------------------------\n");
   fprintf(stdout, "TEST 5 (strings):\n");
-  test_interleave(t5+1, s5+1, (&str_print));
+  int_tests(t5+1, s5+1, (&str_print));
 }
 
 int main()
