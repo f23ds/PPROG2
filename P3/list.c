@@ -85,7 +85,6 @@ Status list_pushFront(List *pl, const void *e)
 Status list_pushBack(List *pl, const void *e)
 {
     Node *pn = NULL;
-    Status st = OK;
 
     if (pl == NULL || e == NULL)
         return ERROR;
@@ -94,8 +93,10 @@ Status list_pushBack(List *pl, const void *e)
 
     if (list_isEmpty(pl) == TRUE)
     {
-        st = list_pushFront(pl, e);
-        return st;
+        pn->next = pl->first;
+        pl->first = pn;
+        pl->last = pn;
+        return OK;
     }
 
     pn->next = pl->last->next;
@@ -159,9 +160,6 @@ void *list_getBack(List *pl)
 void list_free(List *pl)
 {
     void *e = NULL;
-
-    if (pl == NULL)
-        return;
 
     while (pl->size != 0)
     {

@@ -32,11 +32,8 @@ Queue *queue_new()
 
 void queue_free(Queue *q)
 {
-    if (q != NULL)
-    {
-        list_free(q->pl);
-        free(q);
-    }
+    list_free(q->pl);
+    free(q);
 }
 
 Bool queue_isEmpty(const Queue *q)

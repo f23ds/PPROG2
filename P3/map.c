@@ -380,7 +380,6 @@ Point *map_bfs(FILE *pf, Map *mp)
     {
         /* Extraer el punto de la cola y marcarlo como visitado */
         ele = (Point *)queue_pop(q);
-
         /* Si el punto extraido no es el punto de llegada y no ha sido visitado, explorar sus vecinos */
         if (point_getVisited(ele) == FALSE)
         {
@@ -419,4 +418,3 @@ Point *map_bfs(FILE *pf, Map *mp)
     queue_free(q);
     return output;
 }
-

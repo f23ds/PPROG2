@@ -1,5 +1,6 @@
 #include "queue.h"
 #include "sorted_queue.h"
+#include "list.h"
 #include "point.h"
 #include "types.h"
 #include <stdio.h>
@@ -10,6 +11,7 @@
 
 #define TAM 4
 #define ct(X) (CONSTANTS + (X))
+
 int CONSTANTS[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
                    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
@@ -65,11 +67,10 @@ void print_report(Queue *q, void *sol[], pprint p)
 /*--------------------------------------------------------------------------*/
 void test_int(void *test[], void *sol[], pprint p)
 {
-  Queue *q, *qinter;
+  Queue *q;
   int i;
   
   int n = *((int *)(test[-1]));
-  int num = 2;
 
 
   q = queue_new();
@@ -81,14 +82,10 @@ void test_int(void *test[], void *sol[], pprint p)
 
   for (i = 0; i < n; i++)
   {
-    queue_push(q, test[i]);
+    squeue_push(q, test[i], int_cmp);
   }
 
-  squeue_push(q, (void*)num, int_cmp);
-
-
   print_report(q, sol, p);
-
 
   queue_free(q);
 }
@@ -115,10 +112,9 @@ void test_string(void *test[], void *sol[], pprint p)
   }
 
  
-  squeue_push(q, (void*)l, string_cmp);
-
+  squeue_push(q, &l, string_cmp);
+  
   print_report(q, sol, p);
-
 
   queue_free(q);
 }
@@ -127,7 +123,7 @@ void test_string(void *test[], void *sol[], pprint p)
 void test_point()
 {
   Queue *q;
-  Point *p[TAM], *n;
+  Point *p[TAM], *n = NULL;
   int i;
 
   fprintf(stdout, "Test puntos array tamaño 4: \n");
@@ -145,9 +141,8 @@ void test_point()
   {
     return;
   }
-
   
-  for (i = 0; i < n; i++)
+  for (i = 0; i < TAM; i++)
   {
     queue_push(q, p[i]);
   }
@@ -163,7 +158,7 @@ void test_point()
 
 
   point_free(n);
-  for (i = 0; i < n; i++)
+  for (i = 0; i < TAM; i++)
   {
     point_free(p[i]);
   }
