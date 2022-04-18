@@ -32,6 +32,7 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp)
 {
   Status st = OK;
   void *aux = NULL;
+  int x;
 
   /* Comprobamos los punteros */
   if (!q || !ele || !pcmp)
@@ -46,8 +47,8 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp)
 
   if (queue_isEmpty(q) == FALSE && pcmp(ele, queue_getBack(q)) < 0 && st == OK)
   {
-    // TODO: TENER EN CUENTA EL SIZE
-    while (pcmp(queue_getFront(q), ele) <= 0)
+    x=0;
+    while (pcmp(queue_getFront(q), ele) <= 0 && )
     {
       aux = queue_pop(q);
       st = queue_push(q, aux);
