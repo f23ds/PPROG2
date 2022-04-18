@@ -6,7 +6,7 @@ all: p3_e1 p3_e2
 
 p3_e1: p3_e1.o point.o queue.o sorted_queue.o
 	$(CC) p3_e1.o point.o queue.o sorted_queue.o $(LDFLAGS) $(LDLIBS) -lm -g -o p3_e1
-	
+
 p3_e2: p3_e2.o point.o queue.o list.o map.o
 	$(CC) p3_e2.o point.o queue.o list.o map.o $(LDFLAGS) $(LDLIBS) -lm -g -o p3_e2
 
@@ -18,7 +18,7 @@ map.o: map.c map.h types.h point.h
 
 p3_e1.o: p3_e1.c point.h types.h queue.h sorted_queue.h
 	$(CC) -ansi -pedantic -Wall -g -c p3_e1.c
-	
+
 p3_e2.o: p3_e2.c point.h types.h map.h
 	$(CC) -ansi -pedantic -Wall -g -c p3_e2.c
 
