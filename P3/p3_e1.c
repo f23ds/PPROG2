@@ -17,7 +17,7 @@ int CONSTANTS[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 
 typedef int (*pprint)(FILE *, const void *);
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 int int_print(FILE *f, const void *x)
 {
   int *z = (int *)x;
@@ -31,7 +31,7 @@ int int_cmp(const void *c1, const void *c2)
   return (*(int *)c1 - *(int *)c2);
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 int str_print(FILE *f, const void *x)
 {
   char *z = (char *)x;
@@ -43,7 +43,7 @@ int string_cmp(const void *s1, const void *s2)
   return strcmp((char *)s1, (char *)s2);
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 
 void print_report(Queue *q, void *sol[], pprint p)
 {
@@ -62,71 +62,68 @@ void print_report(Queue *q, void *sol[], pprint p)
   queue_print(stdout, q, p);
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 void test_int(void *test[], void *sol[], pprint p)
 {
   Queue *q, *qinter;
   int i;
-  // Trick: Access position -1 to get the number of elements in the array
-  // (see comments in run_tests_interleave)
-  int n = *((int *)(test[-1])), num = 2;
+  
+  int n = *((int *)(test[-1]));
+  int num = 2;
 
-  // Create queue:
+
   q = queue_new();
   if (!q)
   {
     return;
   }
 
-  // Insert data into queue:
+
   for (i = 0; i < n; i++)
   {
     queue_push(q, test[i]);
   }
 
-  // Arrange elements:
-  squeue_push(q, num, int_cmp);
+  squeue_push(q, (void*)num, int_cmp);
 
-  // Print results:
+
   print_report(q, sol, p);
 
-  // Free resources:
+
   queue_free(q);
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 void test_string(void *test[], void *sol[], pprint p)
 {
-  Queue *q, *qinter;
+  Queue *q;
   int i;
-  // Trick: Access position -1 to get the number of elements in the array
-  // (see comments in run_tests_interleave)
-  int n = *((int *)(test[-1])), num = 2;
+  
+  int n = *((int *)(test[-1]));
   char l = 'J';
-  // Create queue:
+
   q = queue_new();
   if (!q)
   {
     return;
   }
 
-  // Insert data into queue:
+  
   for (i = 0; i < n; i++)
   {
     queue_push(q, test[i]);
   }
 
-  // Arrange elements:
-  squeue_push(q, l, string_cmp);
+ 
+  squeue_push(q, (void*)l, string_cmp);
 
-  // Print results:
   print_report(q, sol, p);
 
-  // Free resources:
+
   queue_free(q);
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 void test_point()
 {
   Queue *q;
@@ -142,14 +139,14 @@ void test_point()
 
   n = point_new(3, 3, BARRIER);
 
-  // Create queue:
+  
   q = queue_new();
   if (!q)
   {
     return;
   }
 
-  // Insert data into queue:
+  
   for (i = 0; i < n; i++)
   {
     queue_push(q, p[i]);
@@ -158,13 +155,13 @@ void test_point()
   fprintf(stdout, "Cola inicial: \n");
   queue_print(stdout, q, point_print);
 
-  // Arrange elements:
+ 
   squeue_push(q, n, point_cmpEuDistance);
 
   fprintf(stdout, "Cola ordenada: \n");
   queue_print(stdout, q, point_print);
 
-  // Free resources:
+
   point_free(n);
   for (i = 0; i < n; i++)
   {
@@ -173,13 +170,9 @@ void test_point()
   queue_free(q);
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 void run_tests_int()
 {
-  // The first element in each array is the number of elements
-  // The array content starts at position 1
-  // This is why use pointer+1 in the calls to test_interleave
-  // Note also that ct(x) is a pointer to a variable with value x
   void *t1[] = {ct(7), ct(3), ct(4), ct(6), ct(8), ct(7), ct(1), ct(5)};
   void *s1[] = {ct(8), ct(1), ct(2), ct(3), ct(4), ct(5), ct(6), ct(7), ct(8)};
   fprintf(stdout, "-----------------------------------------------------------\n");
@@ -199,30 +192,30 @@ void run_tests_int()
   test_int(t3 + 1, s3 + 1, (&int_print));
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 void run_tests_string()
 {
 
-  void *t3[] = {ct(6), 'A', 'C', 'D', 'B', 'H', 'M'};
-  void *s3[] = {ct(7), 'A', 'B', 'C', 'D', 'H', 'J', 'M'};
+  void *t3[] = {ct(6), "A", "C", "D", "B", "H", "M"};
+  void *s3[] = {ct(7), "A", "B", "C", "D", "H", "J", "M"};
   fprintf(stdout, "-----------------------------------------------------------\n");
   fprintf(stdout, "TEST 1 (string):\n");
   test_string(t3 + 1, s3 + 1, (&str_print));
 
   void *t4[] = {ct(4), "the", "snow", "is", "white"};
-  void *s4[] = {ct(5), "is", "snow", "the", "white", 'J'};
+  void *s4[] = {ct(5), "is", "snow", "the", "white", "J"};
   fprintf(stdout, "-----------------------------------------------------------\n");
   fprintf(stdout, "TEST 2 (string):\n");
   test_string(t4 + 1, s4 + 1, (&str_print));
 
-  void *t5[] = {ct(5), 'z', 'A', 'a', 'b', 'd'};
-  void *s5[] = {ct(5), 'A', 'J', 'a', 'b', 'd', 'z'};
+  void *t5[] = {ct(5), "z", "A", "a", "b", "d"};
+  void *s5[] = {ct(5), "A", "J", "a", "b", "d", "z"};
   fprintf(stdout, "-----------------------------------------------------------\n");
   fprintf(stdout, "TEST 3 (string):\n");
-  test_string(t4 + 1, s4 + 1, (&str_print));
+  test_string(t5 + 1, s5 + 1, (&str_print));
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 int main()
 {
   run_tests_int();
