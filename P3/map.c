@@ -380,19 +380,24 @@ Point *map_bfs(FILE *pf, Map *mp)
     {
         /* Extraer el punto de la cola y marcarlo como visitado */
         ele = (Point *)queue_pop(q);
-        /* Si el punto extraido no es el punto de llegada y no ha sido visitado, explorar sus vecinos */
+
+        /* Si el punto extraido no es el punto de llegada y no ha sido
+    visitado, explorar sus vecinos */
+
         if (point_getVisited(ele) == FALSE)
         {
+
             point_print(pf, ele);
             point_setVisited(ele, TRUE);
 
-            if (point_equal(ele, output) == TRUE)
+            if (point_cmp(ele, output) == 1)
                 f = 1;
 
             else
             {
-                for (pos = 0; pos < 4; pos++)
+                for (pos = 2; pos < 4; pos++)
                 {
+
                     aux = map_getNeighbor(mp, ele, pos);
 
                     if (!aux)
@@ -408,7 +413,8 @@ Point *map_bfs(FILE *pf, Map *mp)
 
                         if (!st)
                         {
-                            f=1;
+                            queue_free(q);
+                            return NULL;
                         }
                     }
                 }
@@ -417,4 +423,22 @@ Point *map_bfs(FILE *pf, Map *mp)
     }
     queue_free(q);
     return output;
+}
+
+int point_cmp(const Point *p1, const Point *p2)
+{
+    int x1, x2, y1, y2;
+
+    if (!p1 || !p2)
+        return -1;
+
+    x1 = point_getCoordinateX(p1);
+    x2 = point_getCoordinateX(p2);
+    y1 = point_getCoordinateY(p1);
+    y2 = point_getCoordinateY(p2);
+
+    if (x1 == x2 && y1 == y2)
+        return 1;
+
+    return 0;
 }

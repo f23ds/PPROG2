@@ -11,8 +11,6 @@
 #include "types.h"
 #include "map.h"
 
-
-
 int main(int argc, char **argv)
 {
   Map *map;
