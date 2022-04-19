@@ -242,6 +242,7 @@ Map *map_readFromFile(FILE *pf)
             fscanf(pf, "%c", &symbol);
 
             map->array[i][j] = point_new(j, i, symbol);
+           
 
             /* Especificamos los valores del input y del output */
             if (symbol == INPUT)
@@ -347,27 +348,26 @@ Queue
 Point *map_bfs(FILE *pf, Map *mp)
 {
     Queue *q = NULL;
-    Point *input = NULL, *output = NULL, *ele = NULL, *aux = NULL;
+    Point *input = NULL, *output = NULL, *ele = NULL, *aux=NULL;
     Status st = OK;
     Position pos;
-    int f = 0;
+    int f=0;
 
     if (!pf || !mp)
         return NULL;
 
-    /* 1. Inicializamos una cola auxiliar */
+    /*Inicializamos una cola auxiliar */
     q = queue_new();
 
     if (!q)
         return NULL;
 
     /* Insertamos input en la cola auxiliar */
-    input = map_getInput(mp);
-
-    st = queue_push(q, input);
-
-    if (!st)
-    {
+   input = map_getInput(mp);
+    
+   st = queue_push(q, input); 
+    
+    if (!st){
         queue_free(q);
         return NULL;
     }
@@ -376,51 +376,54 @@ Point *map_bfs(FILE *pf, Map *mp)
     output = map_getOutput(mp);
 
     /* Mientras la cola no esté vacía */
-    while ((queue_isEmpty(q)) == FALSE && (f == 0))
+    while ((queue_isEmpty(q)) == FALSE && (f==0))
     {
         /* Extraer el punto de la cola y marcarlo como visitado */
         ele = (Point *)queue_pop(q);
-
+     
         /* Si el punto extraido no es el punto de llegada y no ha sido
     visitado, explorar sus vecinos */
-
-        if (point_getVisited(ele) == FALSE)
-        {
-
-            point_print(pf, ele);
-            point_setVisited(ele, TRUE);
-
-            if (point_cmp(ele, output) == 1)
-                f = 1;
-
-            else
-            {
-                for (pos = 2; pos < 4; pos++)
-                {
-
-                    aux = map_getNeighbor(mp, ele, pos);
-
-                    if (!aux)
-                    {
-                        queue_free(q);
-                        return NULL;
-                    }
-
-                    if (point_getVisited(aux) == FALSE && point_getSymbol(aux) != BARRIER)
-                    {
-
-                        st = queue_push(q, aux);
-
-                        if (!st)
-                        {
-                            queue_free(q);
-                            return NULL;
-                        }
-                    }
-                }
-            }
-        }
+        
+  if(point_getVisited(ele) == FALSE ){
+  
+      point_setVisited(ele, TRUE);
+      
+     
+      if(point_cmp(ele,output)==1)
+        f=1;
+        
+     
+      
+    for (pos = 0 ; pos < 4; pos++)
+    {
+    
+    aux = map_getNeighbor(mp, ele, pos);
+        
+     if (!aux){
+        queue_free(q);
+        return NULL;
     }
+    
+     if((point_getVisited(aux)!=TRUE) && point_getSymbol(aux)!=BARRIER && point_getSymbol(aux)!= INPUT){
+    
+     
+     st=queue_push(q, aux);
+  
+        
+     if (!st){
+        queue_free(q);
+        return NULL;
+    }
+   
+    }
+     
+    
+  }    
+     point_print(pf, ele);   
+}
+    
+  
+}     
     queue_free(q);
     return output;
 }
