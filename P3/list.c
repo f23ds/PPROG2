@@ -99,9 +99,9 @@ Status list_pushBack(List *pl, const void *e)
         return OK;
     }
 
+    pn->next = pl->last->next;
     pl->last->next = pn;
     pl->last = pn;
-    pn->next = NULL;
     pl->size++;
 
     return OK;
@@ -146,7 +146,7 @@ void *list_getFront(List *pl)
     if (pl == NULL)
         return NULL;
 
-    return pl->first;
+    return pl->first->info;
 }
 
 void *list_getBack(List *pl)
@@ -154,7 +154,7 @@ void *list_getBack(List *pl)
     if (pl == NULL)
         return NULL;
 
-    return pl->last;
+    return pl->last->info;
 }
 
 void list_free(List *pl)

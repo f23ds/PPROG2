@@ -70,11 +70,6 @@ Status squeue_push(SortedQueue *q, void *ele, p_queue_ele_cmp pcmp)
   {
     t = squeue_pop(q);
     st = queue_push(q, t);
-
-    fprintf(stdout, "\n");
-    queue_print(stdout, q, _int_print);
-    fprintf(stdout, "\n");
-
     aux = squeue_getFront(q);
     i++;
   }
