@@ -149,7 +149,7 @@ void test_point()
 
   squeue_push(q, n, point_cmpEuDistance);
 
-  fprintf(stdout, "Cola ordenada: \n");
+  fprintf(stdout, "Cola final (despúes de introducir un nuevo punto): \n");
   queue_print(stdout, q, point_print);
 
   point_free(n);
