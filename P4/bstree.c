@@ -24,12 +24,9 @@ struct _BSTree
 /* END [_BSTree] */
 
 /*** BSTNode TAD private functions ***/
-BSTNode *_bst_node_new(const void *elem)
+BSTNode *_bst_node_new()
 {
     BSTNode *pn = NULL;
-
-    if (!elem)
-        return NULL;
 
     pn = malloc(sizeof(BSTNode));
     if (!pn)
@@ -39,7 +36,7 @@ BSTNode *_bst_node_new(const void *elem)
 
     pn->left = pn->right = NULL;
     pn->parent = NULL;
-    pn->info = elem;
+    pn->info = NULL;
     return pn;
 }
 
@@ -246,11 +243,11 @@ Bool tree_contains(BSTree *tree, const void *elem)
         return FALSE;
 
     /* Comprobamos la raíz (caso base)*/
-    if (tree->cmp_ele(tree->root, elem) == 0)
+    if (tree->cmp_ele(tree->root->info, elem) == 0)
     {
         return TRUE;
     }
-    else if (tree->cmp_ele(tree->root, elem) < 0)
+    else if (tree->cmp_ele(tree->root->info, elem) < 0)
     {
         tree_contains(tree->root->right, elem);
     }
@@ -262,31 +259,18 @@ Bool tree_contains(BSTree *tree, const void *elem)
     return FALSE;
 }
 
-/**
- * @brief Public function that inserts an element into a Binary Search Tree.
- *
- * Inserts as a leaf the pointer of the element received as argument. If the
- * element is already in the BST it returns OK.
- *
- * Note that it is necessary to descend the subtree to obtain the
- * insert position. So this operation is logarithm with the length of the path
- * from the leaf to the root.
- *
- * @param tree Pointer to the Tree.
- * @param elem Pointer to the element to be inserted into the Tree.
- *
- * @return Status value OK if the insertion could be done or the element was
- * already in the BST, Status value ERROR otherwise.
- */
 Status tree_insert(BSTree *tree, const void *elem)
 {
     if (!tree || !elem)
         return ERROR;
 
     /* Si el árbol está vacío, asignamos la información del elemento a la raíz */
-    if (tree->root == NULL)
+    if (tree_isEmpty(tree) == TRUE)
     {
-        tree->root = _bst_node_new(elem);
+        tree->root = _bst_node_new();
+        if (!tree->root)
+            return ERROR;
+        tree->root->info = elem;
         return OK;
     }
 
@@ -294,10 +278,8 @@ Status tree_insert(BSTree *tree, const void *elem)
     if (tree_contains(tree, elem) == TRUE)
         return OK;
 
-    /* CASO BASE */
-
     /* Si el elemento es menor que la raíz, nos desplazaremos a la izquierda */
-    if (tree->cmp_ele(tree->root, elem) < 0)
+    if (tree->cmp_ele(tree->root->info, elem) < 0)
     {
         tree_insert(tree->root->left, elem);
     }
@@ -307,4 +289,62 @@ Status tree_insert(BSTree *tree, const void *elem)
     }
 
     return OK;
+}
+
+BSTNode *_bst_search(BSTree *tree, const void *elem)
+{
+    if (!tree || !elem || !tree->root)
+        return NULL;
+
+    if (tree->cmp_ele(tree->root->info, elem) == 0)
+    {
+        return tree->root;
+    }
+    else if (tree->cmp_ele(tree->root->info, elem) < 0)
+    {
+        return _bst_search(tree->root->left, elem);
+    }
+
+    return _bst_search(tree->root->right, elem);
+}
+
+Status _bst_replace_root(BSTree *tree)
+{
+    /* Si tree es NULL o el árbol está vacío no hay nada que reemplazar */
+    if (!tree || !tree->root)
+        return OK;
+
+    /* Existen tres casos: */
+
+    /* CASO 1: La raíz de tree es hoja */
+    if (!tree->root->left && !tree->root->right) 
+    {
+        tree->root->parent = NULL;
+        _bst_node_free(tree->root);
+    }
+    /* CASO 2: La raíz de tree tiene 2 hijos */
+    else if (tree->root->left && tree->root->right) {
+        /* Buscamos su sucesor en orden */
+        // TODO: 
+    } else {
+
+    }
+}
+
+Status tree_remove(BSTree *tree, const void *elem)
+{
+    BSTNode *t;
+
+    if (!tree || !elem || !tree->root)
+        return ERROR;
+
+    if (tree_contains(tree, elem) == FALSE)
+        return OK;
+
+    /* Buscamos el nodo con elemento elem */
+    t = _bst_search(tree, elem);
+    if (!t)
+        return OK;
+
+    return _bst_replace_root(t);
 }
