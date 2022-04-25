@@ -218,15 +218,15 @@ int _int_print(FILE *f, const void *x)
     return fprintf(f, "%d ", *z);
 }
 
-void *_bst_find_min(BSTNode *root)
+BSTNode *_bst_find_min(BSTNode *root)
 {
     if (!root)
         return NULL;
 
     if (root->left == NULL)
-        root = _bst_find_min(root->left);
+        return root;
 
-    return root;
+    return _bst_find_min(root->left);
 }
 
 void *tree_find_min(BSTree *tree)
@@ -236,23 +236,21 @@ void *tree_find_min(BSTree *tree)
     if (!tree || !tree->root)
         return NULL;
 
-    min = tree->root;
-
-    min = _bst_find_min(min);
+    min =  _bst_find_min(tree->root);
 
     /* Buscamos en el subárbol izquierdo */
     return min->info;
 }
 
-void *_bst_find_max(BSTNode *root)
+BSTNode *_bst_find_max(BSTNode *root)
 {
     if (!root)
         return NULL;
 
     if (root->right == NULL)
-        root= _bst_find_max(root->right);
+           return root;
 
-    return root;
+    return _bst_find_max_rec(root->right);
 }
 
 void *tree_find_max(BSTree *tree)
@@ -261,16 +259,31 @@ void *tree_find_max(BSTree *tree)
     
     if (!tree)
         return NULL;
-    max = tree->root;
     
-    max = _bst_find_max(max);
+    max = _bst_find_max(tree->root);
     
     return max->info;
 }
 
 Bool tree_contains(BSTree *tree, const void *elem)
 {
+   if(!tree || !elem)
+       return FALSE;
+    
     return TRUE;
+}
+
+Bool _bst_contains(P_tree_ele_cmp cmp_ele, BTSNode *node, const void *elem){
+    
+    if(!cmp_ele || !elem || !node)
+        return FALSE;
+    
+    if(cmp_ele(elem, node->info)==0)
+        return OK;
+     if(cmp_ele(elem, node->info)<0){
+         return _bst_contains(cmp_ele, node->left, elem);
+     }else
+          return _bst_contains(cmp_ele, node->right, elem);
 }
 
 Status tree_insert(BSTree *tree, const void *elem)
