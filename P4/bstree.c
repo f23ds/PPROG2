@@ -250,17 +250,22 @@ void *_bst_find_max(BSTNode *root)
         return NULL;
 
     if (root->right == NULL)
-        return root;
+        root= _bst_find_max(root->right);
 
-    return _bst_find_max(root->right);
+    return root;
 }
 
 void *tree_find_max(BSTree *tree)
 {
+   BSTNode *max;
+    
     if (!tree)
         return NULL;
-
-    return _bst_find_max(tree->root);
+    max = tree->root;
+    
+    max = _bst_find_max(max);
+    
+    return max->info;
 }
 
 Bool tree_contains(BSTree *tree, const void *elem)
