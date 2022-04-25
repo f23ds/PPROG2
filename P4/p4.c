@@ -80,7 +80,6 @@ int main(int argc, char *argv[])
         return 1;
 
     int_print(stdout, min);
-
     return 0;
 }
 
