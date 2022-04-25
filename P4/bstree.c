@@ -270,7 +270,7 @@ Bool tree_contains(BSTree *tree, const void *elem)
    if(!tree || !elem)
        return FALSE;
     
-    return TRUE;
+    return _bst_contains(tree->cmp_ele, tree->root, elem);
 }
 
 Bool _bst_contains(P_tree_ele_cmp cmp_ele, BTSNode *node, const void *elem){
