@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 
     /* CASO 3: 2 hijos */
 
-
+    tree_destroy(t);
     return 0;
 }
 
