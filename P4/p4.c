@@ -1,66 +1,85 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 #include "bstree.h"
 #include "point.h"
 
+/* START [_BSTNode] */
+typedef struct _BSTNode
+{
+    void *info;
+    struct _BSTNode *left;
+    struct _BSTNode *right;
+    struct _BSTNode *parent;
+} BSTNode;
+/* END [_BSTNode] */
+
+/* START [_BSTree] */
+struct _BSTree
+{
+    BSTNode *root;
+    P_tree_ele_print print_ele;
+    P_tree_ele_cmp cmp_ele;
+};
+/* END [_BSTree] */
+
 BSTree *tree_read_points_from_file(FILE *pf);
 
-/* EL main debe probar la implementación de las funciones find_min, find_max, insert, contain, remove */
+int int_print(FILE *f, const void *x)
+{
+    int *z = (int *)x;
+    return fprintf(f, "%d ", *z);
+}
+
+int int_cmp(const void *c1, const void *c2)
+{
+    if (!c1 || !c2)
+        return INT_MIN;
+    return (*(int *)c1 - *(int *)c2);
+}
+
 int main(int argc, char *argv[])
 {
     BSTree *tree;
-    Point *min, *max;
+    BSTNode n[7];
+    void *min, *max;
+    int nums[7] = {1, 2, 3, 4, 5, 6, 7};
 
-    /* Leemos el árbol */
-    if (argc < 2)
+    /* Inicializamos los nodos */
+    for (int i = 0; i < 7; i++)
     {
-        tree = tree_read_points_from_file("tree_example.txt");
+        n[i].info = nums + 1;
     }
-    else if (argc == 2)
-    {
-        tree = tree_read_points_from_file(argv[1]);
-    }
-    else
-    {
-        fprintf(stdout, "ERROR: el comando debe ser del tipo ./p4 o ./p4 tree_example.txt");
+
+    /* Asignamos las relaciones entre ellos */
+    n[3].left = &n[1];
+    n[3].right = &n[5];
+
+    n[1].left = &n[0];
+    n[1].right = &n[2];
+
+    n[0].left = n[0].right = NULL;
+
+    n[2].left = n[2].right = NULL;
+
+    n[5].left = &n[4];
+    n[5].right = &n[6];
+
+    n[4].left = n[4].right = NULL;
+
+    n[6].left = n[6].right = NULL;
+
+    /* TESTS: */
+    tree = tree_init(int_print, int_cmp);
+    tree->root = &n[3];
+
+    min = tree_find_min(tree);
+    max = tree_find_max(tree);
+
+    if (!min || !max)
         return 1;
-    }
 
-    if (!tree)
-        return 1;
-
-    fprintf(stdout, "TESTS BSTREE.C");
-    /* TEST FIND MIN: resultado esperado -- (1,1) */
-    fprintf(stdout, "------------------------------------------------\n");
-    fprintf(stdout, "TEST FIND MIN:\n");
-    fprintf(stdout, "Obtained: ");
-    min = (Point *) tree_find_min(tree);
-    point_print(stdout, min);
-    fprintf(stdout, "Expected: (1, 1)\n");
-
-    /* TEST FIND MAX: resultado esperado -- (6, 5) */
-    fprintf(stdout, "------------------------------------------------\n");
-    fprintf(stdout, "TEST FIND MAX:\n");
-    fprintf(stdout, "Obtained: ");
-    max = (Point *) tree_find_max(tree);
-    point_print(stdout, max);
-    fprintf(stdout, "Expected: (6, 5)\n");
-
-    /* TEST INSERT */
-
-
-    /* TEST CONTAINS */
-
-
-    /* TEST REMOVE */
-    /* CASO 1: leaf */
-
-
-    /* CASO 2: 1 hijo */
-
-
-    /* CASO 3: 2 hijos */
-
+    int_print(stdout, min);
 
     return 0;
 }

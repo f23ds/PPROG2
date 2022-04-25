@@ -209,18 +209,50 @@ int tree_postOrder(FILE *f, const BSTree *tree)
 }
 
 /**** TODO: find_min, find_max, insert, contains, remove ****/
-void *tree_find_min(BSTree *tree)
+int _int_print(FILE *f, const void *x)
 {
-    if (!tree)
+    if (!f || !x)
+        return -1;
+
+    int *z = (int *)x;
+    return fprintf(f, "%d ", *z);
+}
+
+void *_bst_find_min(BSTNode *root)
+{
+    if (!root)
         return NULL;
 
-    if (tree->root->left == NULL)
-    {
-        return tree->root->info;
-    }
+    if (root->left == NULL)
+        root = _bst_find_min(root->left);
+
+    return root;
+}
+
+void *tree_find_min(BSTree *tree)
+{
+    BSTNode *min;
+
+    if (!tree || !tree->root)
+        return NULL;
+
+    min = tree->root;
+
+    min = _bst_find_min(min);
 
     /* Buscamos en el subárbol izquierdo */
-    return tree_find_min(tree->root->left);
+    return min->info;
+}
+
+void *_bst_find_max(BSTNode *root)
+{
+    if (!root)
+        return NULL;
+
+    if (root->right == NULL)
+        return root;
+
+    return _bst_find_max(root->right);
 }
 
 void *tree_find_max(BSTree *tree)
@@ -228,123 +260,20 @@ void *tree_find_max(BSTree *tree)
     if (!tree)
         return NULL;
 
-    if (tree->root->right == NULL)
-    {
-        return tree->root->info;
-    }
-
-    /* Buscamos en el subárbol derecho */
-    return tree_find_max(tree->root->right);
+    return _bst_find_max(tree->root);
 }
 
 Bool tree_contains(BSTree *tree, const void *elem)
 {
-    if (!tree || !elem)
-        return FALSE;
-
-    /* Comprobamos la raíz (caso base)*/
-    if (tree->cmp_ele(tree->root->info, elem) == 0)
-    {
-        return TRUE;
-    }
-    else if (tree->cmp_ele(tree->root->info, elem) < 0)
-    {
-        tree_contains(tree->root->right, elem);
-    }
-    else
-    {
-        tree_contains(tree->root->left, elem);
-    }
-
-    return FALSE;
+    return TRUE;
 }
 
 Status tree_insert(BSTree *tree, const void *elem)
 {
-    if (!tree || !elem)
-        return ERROR;
-
-    /* Si el árbol está vacío, asignamos la información del elemento a la raíz */
-    if (tree_isEmpty(tree) == TRUE)
-    {
-        tree->root = _bst_node_new();
-        if (!tree->root)
-            return ERROR;
-        tree->root->info = elem;
-        return OK;
-    }
-
-    /* Si el árbol ya contiene este elemento, return OK */
-    if (tree_contains(tree, elem) == TRUE)
-        return OK;
-
-    /* Si el elemento es menor que la raíz, nos desplazaremos a la izquierda */
-    if (tree->cmp_ele(tree->root->info, elem) < 0)
-    {
-        tree_insert(tree->root->left, elem);
-    }
-    else
-    {
-        tree_insert(tree->root->right, elem);
-    }
-
     return OK;
-}
-
-BSTNode *_bst_search(BSTree *tree, const void *elem)
-{
-    if (!tree || !elem || !tree->root)
-        return NULL;
-
-    if (tree->cmp_ele(tree->root->info, elem) == 0)
-    {
-        return tree->root;
-    }
-    else if (tree->cmp_ele(tree->root->info, elem) < 0)
-    {
-        return _bst_search(tree->root->left, elem);
-    }
-
-    return _bst_search(tree->root->right, elem);
-}
-
-Status _bst_replace_root(BSTree *tree)
-{
-    /* Si tree es NULL o el árbol está vacío no hay nada que reemplazar */
-    if (!tree || !tree->root)
-        return OK;
-
-    /* Existen tres casos: */
-
-    /* CASO 1: La raíz de tree es hoja */
-    if (!tree->root->left && !tree->root->right) 
-    {
-        tree->root->parent = NULL;
-        _bst_node_free(tree->root);
-    }
-    /* CASO 2: La raíz de tree tiene 2 hijos */
-    else if (tree->root->left && tree->root->right) {
-        /* Buscamos su sucesor en orden */
-        // TODO: 
-    } else {
-
-    }
 }
 
 Status tree_remove(BSTree *tree, const void *elem)
 {
-    BSTNode *t;
-
-    if (!tree || !elem || !tree->root)
-        return ERROR;
-
-    if (tree_contains(tree, elem) == FALSE)
-        return OK;
-
-    /* Buscamos el nodo con elemento elem */
-    t = _bst_search(tree, elem);
-    if (!t)
-        return OK;
-
-    return _bst_replace_root(t);
+    return OK;
 }
