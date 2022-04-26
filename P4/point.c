@@ -203,7 +203,7 @@ int point_print(FILE *pf, const void *p)
 
     point = (Point *)p;
 
-    return fprintf(pf, "[(%d, %d): %c]", point->x, point->y, point->symbol);
+    return fprintf(pf, "[(%d, %d): %c]\n", point->x, point->y, point->symbol);
 }
 
 Status point_euDistance(const Point *p1, const Point *p2, double *distance)

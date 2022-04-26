@@ -1,8 +1,7 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "bstree.h"
-
-#define MAX_BUFFER 64 // Maximum file line size
 
 /* START [_BSTNode] */
 typedef struct _BSTNode
@@ -10,7 +9,6 @@ typedef struct _BSTNode
     void *info;
     struct _BSTNode *left;
     struct _BSTNode *right;
-    struct _BSTNode *parent;
 } BSTNode;
 /* END [_BSTNode] */
 
@@ -24,6 +22,8 @@ struct _BSTree
 /* END [_BSTree] */
 
 /*** BSTNode TAD private functions ***/
+BSTNode *_bst_remove_rec(BSTNode *pn, const void *elem, P_tree_ele_cmp cmp_ele);
+
 BSTNode *_bst_node_new()
 {
     BSTNode *pn = NULL;
@@ -35,7 +35,6 @@ BSTNode *_bst_node_new()
     }
 
     pn->left = pn->right = NULL;
-    pn->parent = NULL;
     pn->info = NULL;
     return pn;
 }
@@ -44,8 +43,6 @@ void _bst_node_free(BSTNode *pn)
 {
     if (!pn)
         return;
-    if (pn->info)
-        free(pn->info);
     free(pn);
 }
 
@@ -209,16 +206,7 @@ int tree_postOrder(FILE *f, const BSTree *tree)
 }
 
 /**** TODO: find_min, find_max, insert, contains, remove ****/
-int _int_print(FILE *f, const void *x)
-{
-    if (!f || !x)
-        return -1;
-
-    int *z = (int *)x;
-    return fprintf(f, "%d ", *z);
-}
-
-BSTNode *_bst_find_min(BSTNode *root)
+BSTNode *_bst_find_min_rec(BSTNode *root)
 {
     if (!root)
         return NULL;
@@ -226,72 +214,142 @@ BSTNode *_bst_find_min(BSTNode *root)
     if (root->left == NULL)
         return root;
 
-    return _bst_find_min(root->left);
+    return _bst_find_min_rec(root->left);
 }
 
 void *tree_find_min(BSTree *tree)
 {
-    BSTNode *min;
-
-    if (!tree || !tree->root)
+    BSTNode *nodo = NULL;
+    if (tree == NULL)
+    {
         return NULL;
+    }
+    if (tree_isEmpty(tree) == TRUE)
+    {
+        return NULL;
+    }
 
-    min =  _bst_find_min(tree->root);
+    nodo = _bst_find_min_rec(tree->root);
 
-    /* Buscamos en el subárbol izquierdo */
-    return min->info;
+    return nodo->info;
 }
 
-BSTNode *_bst_find_max(BSTNode *root)
+BSTNode *_bst_find_max_rec(BSTNode *root)
 {
-    if (!root)
+    if (root == NULL)
+    {
         return NULL;
+    }
 
     if (root->right == NULL)
-           return root;
+    {
+        return root;
+    }
 
     return _bst_find_max_rec(root->right);
 }
 
 void *tree_find_max(BSTree *tree)
 {
-   BSTNode *max;
-    
-    if (!tree)
+    BSTNode *nodo = NULL;
+    if (tree == NULL)
+    {
         return NULL;
-    
-    max = _bst_find_max(tree->root);
-    
-    return max->info;
+    }
+    if (tree_isEmpty(tree) == TRUE)
+    {
+        return NULL;
+    }
+
+    nodo = _bst_find_max_rec(tree->root);
+
+    return nodo->info;
+}
+
+Bool _bst_tree_contains(BSTNode *node, const void *elem, P_tree_ele_cmp cmp_ele)
+{
+    Bool contains = FALSE;
+    int cmp;
+
+    if (!node || !elem || !cmp_ele)
+        return FALSE;
+
+    cmp = cmp_ele(node->info, elem);
+
+    /* CASO BASE */
+    if (cmp == 0)
+    {
+        return TRUE;
+    }
+    else if (cmp < 0)
+    {
+        contains = _bst_tree_contains(node->left, elem, cmp_ele);
+    }
+    else
+    {
+        contains = _bst_tree_contains(node->right, elem, cmp_ele);
+    }
+
+    return contains;
 }
 
 Bool tree_contains(BSTree *tree, const void *elem)
 {
-   if(!tree || !elem)
-       return FALSE;
-    
-    return _bst_contains(tree->cmp_ele, tree->root, elem);
+    if (!tree || !elem)
+        return FALSE;
+
+    return _bst_tree_contains(tree->root, elem, tree->cmp_ele);
 }
 
-Bool _bst_contains(P_tree_ele_cmp cmp_ele, BTSNode *node, const void *elem){
-    
-    if(!cmp_ele || !elem || !node)
-        return FALSE;
-    
-    if(cmp_ele(elem, node->info)==0)
-        return OK;
-     if(cmp_ele(elem, node->info)<0){
-         return _bst_contains(cmp_ele, node->left, elem);
-     }else
-          return _bst_contains(cmp_ele, node->right, elem);
+BSTNode *_bst_insert_rec(BSTNode *node, const void *elem, P_tree_ele_cmp cmp_ele)
+{
+    if (!elem || !cmp_ele)
+        return NULL;
+
+    /* CASO BASE: Si el árbol está vacío, el elemento a insertar será su raíz */
+    if (!node)
+    {
+        node = _bst_node_new();
+        if (!node)
+        {
+            return NULL;
+        }
+
+        node->info = (void *)elem;
+        return node;
+    }
+
+    /* CASO GENERAL: árbol no vacío -- modificar el subárbol que corresponda */
+    if (cmp_ele(node->info, elem) > 0)
+    {
+        node->left = _bst_insert_rec(node->left, elem, cmp_ele);
+    }
+    else
+    {
+        node->right = _bst_insert_rec(node->right, elem, cmp_ele);
+    }
+
+    return node;
 }
 
 Status tree_insert(BSTree *tree, const void *elem)
 {
-    return OK;
-}
+    BSTNode *st = NULL;
 
-Status tree_remove(BSTree *tree, const void *elem)
-{
+    if (tree == NULL || elem == NULL)
+    {
+        return ERROR;
+    }
+
+    /* Si el árbol contiene el elemento, return OK para evitar repetición */
+    if (tree_contains(tree, elem))
+        return OK;
+
+    st = _bst_insert_rec(tree->root, elem, tree->cmp_ele);
+    if (!st)
+        return ERROR;
+
+    tree->root = st;
+
     return OK;
 }

@@ -1,29 +1,9 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <limits.h>
-#include "bstree.h"
+#include <stdlib.h>
+
 #include "point.h"
-
-/* START [_BSTNode] */
-typedef struct _BSTNode
-{
-    void *info;
-    struct _BSTNode *left;
-    struct _BSTNode *right;
-    struct _BSTNode *parent;
-} BSTNode;
-/* END [_BSTNode] */
-
-/* START [_BSTree] */
-struct _BSTree
-{
-    BSTNode *root;
-    P_tree_ele_print print_ele;
-    P_tree_ele_cmp cmp_ele;
-};
-/* END [_BSTree] */
-
-BSTree *tree_read_points_from_file(FILE *pf);
+#include "types.h"
+#include "bstree.h"
 
 int int_print(FILE *f, const void *x)
 {
@@ -31,107 +11,90 @@ int int_print(FILE *f, const void *x)
     return fprintf(f, "%d ", *z);
 }
 
-int int_cmp(const void *c1, const void *c2)
+Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cmp_ele)
 {
-    if (!c1 || !c2)
-        return INT_MIN;
-    return (*(int *)c1 - *(int *)c2);
-}
+    BSTree *tree = NULL;
+    long i, n, x, y;
+    Point **p;
+    char s;
 
-int main(int argc, char *argv[])
-{
-    BSTree *tree;
-    BSTNode n[7];
-    void *min, *max;
-    int nums[7] = {1, 2, 3, 4, 5, 6, 7};
-
-    /* Inicializamos los nodos */
-    for (int i = 0; i < 7; i++)
+    fscanf(f, "%ld", &n);
+    if (n < 0)
     {
-        n[i].info = nums + 1;
+        fprintf(salida, "El número no es correcto.");
+        return ERROR;
     }
 
-    /* Asignamos las relaciones entre ellos */
-    n[3].left = &n[1];
-    n[3].right = &n[5];
+    /* Reservamos memoria para el array de puntos */
+    //TODO:
 
-    n[1].left = &n[0];
-    n[1].right = &n[2];
+    tree = tree_init(print_ele, cmp_ele);
 
-    n[0].left = n[0].right = NULL;
+    if (tree == NULL)
+    {
+        fprintf(salida, "Error en la reserva de memoria del árbol.\n");
+        return ERROR;
+    }
 
-    n[2].left = n[2].right = NULL;
+    fprintf(salida, "Creando árbol...\n");
+    for (i = 0; i < n; i++)
+    {
 
-    n[5].left = &n[4];
-    n[5].right = &n[6];
+        fscanf(f, "%ld %ld %c", &x, &y, &s);
+        p = point_new(x, y, BARRIER);
 
-    n[4].left = n[4].right = NULL;
+        if (!p)
+            return -1;
 
-    n[6].left = n[6].right = NULL;
+        if (tree_insert(tree, p) == ERROR)
+        {
+            tree_destroy(tree);
+            return ERROR;
+        }
+    }
 
-    /* TESTS: */
-    tree = tree_init(int_print, int_cmp);
-    tree->root = &n[3];
+    fprintf(stdout, "Árbol creado con éxito.\n");
+    fprintf(stdout, "Tamaño árbol: %ld\n", n);
 
-    min = tree_find_min(tree);
-    max = tree_find_max(tree);
+    fprintf(stdout, "Elemento mínimo del árbol: ");
+    print_ele(stdout, tree_find_min(tree));
 
-    if (!min || !max)
-        return 1;
+    fprintf(stdout, "Elemento máximo del árbol: ");
+    print_ele(stdout, tree_find_max(tree));
 
-    int_print(stdout, min);
-    return 0;
+    fprintf(stdout, "In order:\n");
+    tree_inOrder(stdout, tree);
+    fprintf(stdout, "\n");
+
+    tree_destroy(tree);
+    return OK;
 }
 
-BSTree *tree_read_points_from_file(FILE *pf)
+int main(int argc, char **argv)
 {
-    BSTree *t;
-    int nnodes = 0, i;
+    FILE *pf;
     Status st = OK;
-    int x, y;
-    char symbol;
-    Point *p;
+
+    /* Comprobamos que hay el número correcto de argumentos en la command line */
+    if (argc != 2)
+    {
+        printf("Error en la ejecución. Debe ser del tipo: './p4 tree_example.txt'\n");
+        return -1;
+    }
+
+    /* Abrimos el archivo cuyo nombre es el segundo argumentos de la command line */
+    pf = fopen(argv[1], "r");
 
     if (!pf)
+        return -1;
+
+    st = test(pf, stdout, point_print, point_cmpEuDistance);
+
+    if (st == ERROR)
     {
-        return NULL;
+        fprintf(stdout, "Error en la ejecución del programa.");
+        return -1;
     }
 
-    /* Read number of nodes */
-    if (fscanf(pf, "%d\n", &nnodes) != 1)
-    {
-        return NULL;
-    }
-
-    /* Create tree */
-    t = tree_init(point_print, point_cmpEuDistance);
-    if (!t)
-    {
-        return NULL;
-    }
-
-    /* Read nodes */
-    for (i = 0; i < nnodes && st == OK; i++)
-    {
-        if (fscanf(pf, "%d %d %c", &x, &y, &symbol) != 3)
-        {
-            return NULL;
-        }
-        p = point_new(x, y, symbol);
-        if (!p)
-        {
-            tree_destroy(t);
-            return NULL;
-        }
-
-        st = tree_insert(t, p);
-        if (st == ERROR)
-        {
-            tree_destroy(t);
-            point_free(p);
-            return NULL;
-        }
-    }
-
-    return t;
+    return 1;
 }

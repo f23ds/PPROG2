@@ -25,7 +25,7 @@
 Status tree_insert(BSTree *tree, const void *elem)
 {
     if (!tree || !elem)
-        return ERROR;
+        return ERROR; 
 
     /* Si el árbol está vacío, asignamos la información del elemento a la raíz */
     if (tree_isEmpty(tree) == TRUE)
