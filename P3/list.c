@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 typedef struct _Node Node;
-    
+
 struct _Node
 {
     void *info;
@@ -72,9 +72,11 @@ Status list_pushFront(List *pl, const void *e)
         return ERROR;
 
     pn->next = pl->first;
+    pn->info = (void *)e;
     pl->first = pn;
-    
-    if (list_size(pl) == 0) {
+
+    if (list_isEmpty(pl) == TRUE)
+    {
         pl->last = pn;
     }
 
@@ -92,18 +94,18 @@ Status list_pushBack(List *pl, const void *e)
 
     pn = node_new(e);
 
-    if (list_size(pl) == 0)
+    if (list_isEmpty(pl) == TRUE)
     {
-        pn->next = pl->first;
         pl->first = pn;
-        pl->last = pn;
-        pl->size++;
-        return OK;
+    }
+    else
+    {
+        pl->last->next = pn;
     }
 
-    pn->next = pl->last->next;
-    pl->last->next = pn;
     pl->last = pn;
+    pn->info = (void *)e;
+    pn->next = NULL;
     pl->size++;
 
     return OK;
@@ -161,11 +163,11 @@ void *list_getBack(List *pl)
 
 void list_free(List *pl)
 {
-    while (pl->size != 0)
-    {
-        list_popFront(pl);
-    }
+    if (pl == NULL)
+        return;
 
+    while (list_isEmpty(pl) == FALSE)
+        list_popFront(pl);
     free(pl);
 }
 

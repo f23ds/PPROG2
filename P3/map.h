@@ -15,7 +15,7 @@ typedef enum {
     UP = 1,
     LEFT = 2,
     DOWN = 3,       
-    STAY = 4
+    STAY = 4,
 } Position;
 
 typedef struct _Map Map;
@@ -226,8 +226,6 @@ Point * map_dfs (FILE *pf, Map *mp);
  * @return The function returns the output map point o NULL otherwise
 **/
 Point * map_bfs (FILE *pf, Map *mp);
-
-int point_cmp (const Point *p1, const Point *p2);
 
 #endif /* MAP_H */
 

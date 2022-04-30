@@ -153,7 +153,7 @@ Point *map_getPoint(const Map *mp, const Point *p)
     return mp->array[p->y][p->x];
 }
 
-Point *map_getNeighbor(const Map *mp, const Point *p, Position pos)
+Point *map_getNeighboor(const Map *mp, const Point *p, Position pos)
 {
     if (mp == NULL || p == NULL)
     {
@@ -213,7 +213,7 @@ Map *map_readFromFile(FILE *pf)
     /*Declaramos las variables internas de la funcion*/
     Map *mp = NULL;
     char sec;
-    int j,  i;  
+    int j, i;
 
     if (!pf)
         return NULL;
@@ -244,7 +244,7 @@ Map *map_readFromFile(FILE *pf)
                 /*Liberamos elementos en caso de error*/
                 for (j--; j >= 0; j--)
                     free(mp->array[i][j]);
-                
+
                 for (i--; i >= 0; i--)
                 {
                     for (j = mp->ncols - 1; j >= 0; j--)
@@ -281,13 +281,12 @@ Map *map_readFromFile(FILE *pf)
             else if (sec == INPUT)
                 map_setInput(mp, mp->array[i][j]);
         }
-        
+
         fscanf(pf, "\n");
     }
 
     return mp;
 }
-
 
 Bool map_equal(const void *_mp1, const void *_mp2)
 {
@@ -354,6 +353,24 @@ int map_print(FILE *pf, Map *mp)
     return c;
 }
 
+int point_cmp(const Point *p1, const Point *p2)
+{
+    int x1, x2, y1, y2;
+
+    if (!p1 || !p2)
+        return -1;
+
+    x1 = point_getCoordinateX(p1);
+    x2 = point_getCoordinateX(p2);
+    y1 = point_getCoordinateY(p1);
+    y2 = point_getCoordinateY(p2);
+
+    if (x1 == x2 && y1 == y2)
+        return 1;
+
+    return 0;
+}
+
 Point *map_bfs(FILE *pf, Map *mp)
 {
     Queue *q = NULL;
@@ -373,7 +390,7 @@ Point *map_bfs(FILE *pf, Map *mp)
 
     /* Insertamos input en la cola auxiliar */
     input = map_getInput(mp);
-   
+
     st = queue_push(q, input);
 
     if (!st)
@@ -402,52 +419,34 @@ Point *map_bfs(FILE *pf, Map *mp)
 
             if (point_cmp(ele, output) == 1)
                 f = 1;
-            else {
-            for (pos = 0; pos < 4; pos++)
+            else
             {
-
-                aux = map_getNeighboor(mp, ele, pos);
-
-                if (!aux)
-                {
-                    queue_free(q);
-                    return NULL;
-                }
-
-                if ((point_getVisited(aux) != TRUE) && point_getSymbol(aux) != BARRIER && point_getSymbol(aux) != INPUT)
+                for (pos = 0; pos < 4; pos++)
                 {
 
-                    st = queue_push(q, aux);
+                    aux = map_getNeighboor(mp, ele, pos);
 
-                    if (!st)
+                    if (!aux)
                     {
                         queue_free(q);
                         return NULL;
                     }
+
+                    if ((point_getVisited(aux) != TRUE) && point_getSymbol(aux) != BARRIER && point_getSymbol(aux) != INPUT)
+                    {
+
+                        st = queue_push(q, aux);
+
+                        if (!st)
+                        {
+                            queue_free(q);
+                            return NULL;
+                        }
+                    }
                 }
             }
-           }
-           
         }
     }
     queue_free(q);
     return output;
-}
-
-int point_cmp(const Point *p1, const Point *p2)
-{
-    int x1, x2, y1, y2;
-
-    if (!p1 || !p2)
-        return -1;
-
-    x1 = point_getCoordinateX(p1);
-    x2 = point_getCoordinateX(p2);
-    y1 = point_getCoordinateY(p1);
-    y2 = point_getCoordinateY(p2);
-
-    if (x1 == x2 && y1 == y2)
-        return 1;
-
-    return 0;
 }
