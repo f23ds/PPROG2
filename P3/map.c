@@ -210,53 +210,84 @@ Status map_setOutput(Map *mp, Point *p)
 
 Map *map_readFromFile(FILE *pf)
 {
-    Map *map;
-    unsigned int nrows, ncols;
-    char symbol;
-    int i, j;
+    /*Declaramos las variables internas de la funcion*/
+    Map *mp = NULL;
+    char sec;
+    int j,  i;  
 
-    if (pf == NULL)
+    if (!pf)
+        return NULL;
+    /*Reservamos memoria para un mapa*/
+
+    mp = (Map *)calloc(1, sizeof(Map));
+
+    if (!mp)
+        return NULL;
+
+    /*Se comienza a leer el archivo mapa*/
+
+    if (fscanf(pf, "%u %u\n", &mp->nrows, &mp->ncols) != 2)
     {
+        free(mp);
         return NULL;
     }
 
-    /*Reserva y crea mapa*/
-    map = (Map *)calloc(1, sizeof(Map));
+    /*Leemos todos los puntos del mapa*/
 
-    fscanf(pf, "%u %u\n", &nrows, &ncols);
-
-    map->nrows = nrows;
-    map->ncols = ncols;
-
-    for (i = 0; i < nrows; i++)
+    for (i = 0; i < mp->nrows; i++)
     {
-        /* Consideramos el salto de línea para utilizar correctamente la función fscanf */
-        if (i > 0)
+        for (j = 0; j < mp->ncols; j++)
         {
-            fscanf(pf, "\n");
-        }
-
-        for (j = 0; j < ncols; j++)
-        {
-
-            fscanf(pf, "%c", &symbol);
-
-            map->array[i][j] = point_new(j, i, symbol);
-
-            /* Especificamos los valores del input y del output */
-            if (symbol == INPUT)
+            /*Error durante lectura*/
+            if (fscanf(pf, "%c", &sec) != 1)
             {
-                map->input = point_new(j, i, INPUT);
+                /*Liberamos elementos en caso de error*/
+                for (j--; j >= 0; j--)
+                    free(mp->array[i][j]);
+                
+                for (i--; i >= 0; i--)
+                {
+                    for (j = mp->ncols - 1; j >= 0; j--)
+                        free(mp->array[i][j]);
+                }
+                /*Liberamos mapa*/
+                free(mp);
+                return NULL;
             }
-            else if (symbol == OUTPUT)
+            /*Creamos el nuevo punto*/
+
+            mp->array[i][j] = point_new(j, i, sec);
+
+            /*Si se produce algún error liberamos memoria*/
+
+            if (mp->array[i][j] == NULL)
             {
-                map->output = point_new(j, i, OUTPUT);
+                for (j--; j >= 0; j--)
+                    free(mp->array[i][j]);
+
+                for (i--; i >= 0; i--)
+                {
+                    for (j = mp->ncols - 1; j >= 0; j--)
+                        free(mp->array[i][j]);
+                }
+                free(mp);
+                return NULL;
             }
+
+            /*Asignamos input y output*/
+
+            if (sec == OUTPUT)
+                map_setOutput(mp, mp->array[i][j]);
+            else if (sec == INPUT)
+                map_setInput(mp, mp->array[i][j]);
         }
+        
+        fscanf(pf, "\n");
     }
 
-    return map;
+    return mp;
 }
+
 
 Bool map_equal(const void *_mp1, const void *_mp2)
 {
@@ -323,13 +354,6 @@ int map_print(FILE *pf, Map *mp)
     return c;
 }
 
-/**
- * ERRORES:
- * 1) valgrind no input point
- * 2) valgrind no output point
- * 
- * 
-**/
 Point *map_bfs(FILE *pf, Map *mp)
 {
     Queue *q = NULL;
@@ -349,7 +373,7 @@ Point *map_bfs(FILE *pf, Map *mp)
 
     /* Insertamos input en la cola auxiliar */
     input = map_getInput(mp);
-    
+   
     st = queue_push(q, input);
 
     if (!st)
@@ -374,14 +398,15 @@ Point *map_bfs(FILE *pf, Map *mp)
         {
 
             point_setVisited(ele, TRUE);
+            point_print(pf, ele);
 
             if (point_cmp(ele, output) == 1)
                 f = 1;
-
+            else {
             for (pos = 0; pos < 4; pos++)
             {
 
-                aux = map_getNeighbor(mp, ele, pos);
+                aux = map_getNeighboor(mp, ele, pos);
 
                 if (!aux)
                 {
@@ -401,7 +426,8 @@ Point *map_bfs(FILE *pf, Map *mp)
                     }
                 }
             }
-            point_print(pf, ele);
+           }
+           
         }
     }
     queue_free(q);
