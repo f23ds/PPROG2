@@ -194,7 +194,7 @@ int tree_inOrder(FILE *f, const BSTree *tree)
     if (!f || !tree)
         return -1;
 
-    return _bst_inOrder_rec(tree->root, f, tree->print_ele) + fprintf(f, "\n");
+    return _bst_inOrder_rec(tree->root, f, tree->print_ele);
 }
 
 int tree_postOrder(FILE *f, const BSTree *tree)
@@ -283,11 +283,11 @@ Bool _bst_tree_contains(BSTNode *node, const void *elem, P_tree_ele_cmp cmp_ele)
     }
     else if (cmp < 0)
     {
-        contains = _bst_tree_contains(node->left, elem, cmp_ele);
+        contains = _bst_tree_contains(node->right, elem, cmp_ele);
     }
     else
     {
-        contains = _bst_tree_contains(node->right, elem, cmp_ele);
+        contains = _bst_tree_contains(node->left, elem, cmp_ele);
     }
 
     return contains;
@@ -295,15 +295,15 @@ Bool _bst_tree_contains(BSTNode *node, const void *elem, P_tree_ele_cmp cmp_ele)
 
 Bool tree_contains(BSTree *tree, const void *elem)
 {
-    if (!tree || !elem)
+    if (!tree || !elem || !tree->root)
         return FALSE;
 
     return _bst_tree_contains(tree->root, elem, tree->cmp_ele);
 }
 
-BSTNode *_bst_insert_rec(BSTNode *node, const void *elem, P_tree_ele_cmp cmp_ele)
+BSTNode *_bst_insert_rec(BSTree *tree, BSTNode *node, const void *elem, P_tree_ele_cmp cmp_ele)
 {
-    if (!elem || !cmp_ele)
+    if (!tree || !elem || !cmp_ele)
         return NULL;
 
     /* CASO BASE: Si el árbol está vacío, el elemento a insertar será su raíz */
@@ -316,17 +316,18 @@ BSTNode *_bst_insert_rec(BSTNode *node, const void *elem, P_tree_ele_cmp cmp_ele
         }
 
         node->info = (void *)elem;
+        tree->root = node;
         return node;
     }
 
     /* CASO GENERAL: árbol no vacío -- modificar el subárbol que corresponda */
     if (cmp_ele(node->info, elem) > 0)
     {
-        node->left = _bst_insert_rec(node->left, elem, cmp_ele);
+        node->left = _bst_insert_rec(tree, node->left, elem, cmp_ele);
     }
     else
     {
-        node->right = _bst_insert_rec(node->right, elem, cmp_ele);
+        node->right = _bst_insert_rec(tree, node->right, elem, cmp_ele);
     }
 
     return node;
@@ -345,7 +346,7 @@ Status tree_insert(BSTree *tree, const void *elem)
     if (tree_contains(tree, elem))
         return OK;
 
-    st = _bst_insert_rec(tree->root, elem, tree->cmp_ele);
+    st = _bst_insert_rec(tree, tree->root, elem, tree->cmp_ele);
     if (!st)
         return ERROR;
 
