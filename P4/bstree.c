@@ -430,14 +430,15 @@ Status tree_remove (BSTree * tree, const void * elem){
 
     /*Llamamos a la función recursiva*/
     
-    aux = _bst_remove_rec(tree->root, elem, tree->cmp_ele);
-    tree->root = aux;
+    st = _bst_remove_rec(tree->root, elem, tree->cmp_ele);
+    /*Establecemos nodo como raíz del árbol*/
+    tree->root = st;
     return OK;
 }
 
 BSTNode * _bst_remove_rec(BSTNode * pn, const void * elem, P_tree_ele_cmp cmp_ele){
    
-    BSTNode *ret_node, *aux_node;
+    BSTNode *ret, *aux_node;
     int comp;
     
     
@@ -447,30 +448,28 @@ BSTNode * _bst_remove_rec(BSTNode * pn, const void * elem, P_tree_ele_cmp cmp_el
 
     comp = cmp_ele(elem, pn->info);
 
-    if(aux < 0){
+    if(comp < 0){
         pn->left = _bst_remove_rec(pn->left, elem, cmp_ele);
     }
 
-    else if(aux > 0){
+    else if(comp > 0){
         pn->right = _bst_remove_rec(pn->right, elem, cmp_ele);
-    }
-
-    else{
-        /*CASO 1: No tiene hijos*/
+    } else{ /*Ambos nodos son iguales*/
+        /*CASO 1: No tiene hijos, eliminamos el nodo, no hay sustitución*/
         if(!(pn->right) && !(pn->left)){
             _bst_node_free(pn);
             return NULL;
-        /*CASO 2: Tiene un hijo a la derecha*/
+        /*CASO 2: Tiene un hijo a la derecha, eliminamos nodo pero guardando su valor*/
         } else if(pn->right != NULL && !(pn->left)){
-            ret_node = pn->right;
+            ret = pn->right;
             _bst_node_free(pn);
-            return ret_node;
+            return ret;
 
-        /*CASO 3: Tiene un hijo a la izquierda*/
+        /*CASO 3: Tiene un hijo a la izquierda, eliminamos nodo pero guardando su valor*/
         } else if(!(pn->right) && pn->left != NULL){
-            ret_node = pn->left;
+            ret = pn->left;
             _bst_node_free(pn);
-            return ret_node;
+            return ret;
 
         /*CASO 4: Tiene dos hijos*/
         } else if( pn->right != NULL &&  pn->left != NULL){
