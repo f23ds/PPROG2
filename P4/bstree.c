@@ -354,3 +354,96 @@ Status tree_insert(BSTree *tree, const void *elem)
 
     return OK;
 }
+
+/**
+* @brief Public function that removes an element into a Binary Search
+Tree.
+*
+* Removes the (first) occurrence of the element received as argument.
+*
+* Note that it is necessary to descend the subtree to obtain the
+* remove position. So this operation is logarithm with the length of
+the path
+* from the leaf to the root.
+*
+* @param tree Pointer to the Tree.
+* @param elem Pointer to the element to be removed from the Tree.
+*
+* @return Status value OK if the removal could be done or the element
+was not
+* in the BST, Status value ERROR otherwise.
+*/
+Status tree_remove(BSTree *tree, const void *elem)
+{
+    BSTNode *st = NULL;
+
+    /*Comprobamos si los argumentos son válidos*/
+
+    if (!tree || !elem)
+    {
+        return ERROR;
+    }
+
+    /*Comprobamos si el elemento a eliminar está contenido en el árbol*/
+
+    if (tree_contains(tree, elem) == FALSE)
+        return ERROR;
+
+    /*Llamamos a la función recursiva, una vez el nodo está contenido*/
+
+    st = _bst_remove_rec(tree->root, elem, tree->cmp_ele);
+    /*Establecemos nodo como raíz del árbol*/
+    tree->root = st;
+    return OK;
+}
+
+BSTNode *_bst_remove_rec(BSTNode *pn, const void *elem, P_tree_ele_cmp cmp_ele)
+{
+    int comp;
+    BSTNode *ret_node, *aux_node;
+    if (pn == NULL || elem == NULL || cmp_ele == NULL)
+    {
+        return NULL;
+    }
+
+    comp = cmp_ele(elem, pn->info);
+
+    if (comp < 0)
+    {
+        pn->left = _bst_remove_rec(pn->left, elem, cmp_ele);
+    }
+
+    else if (comp > 0)
+    {
+        pn->right = _bst_remove_rec(pn->right, elem, cmp_ele);
+    }
+
+    else
+    {
+        if (pn->right == NULL && pn->left == NULL)
+        {
+            _bst_node_free(pn);
+            return NULL;
+        }
+        else if (pn->right == NULL && pn->left != NULL)
+        {
+            ret_node = pn->left;
+            _bst_node_free(pn);
+            return ret_node;
+        }
+        else if (pn->right != NULL && pn->left == NULL)
+        {
+            ret_node = pn->right;
+            _bst_node_free(pn);
+            return ret_node;
+        }
+        else if (pn->right != NULL && pn->left != NULL)
+        {
+            aux_node = _bst_find_min_rec(pn->right);
+            pn->info = aux_node->info;
+            pn->right = _bst_remove_rec(pn->right, aux_node->info, cmp_ele);
+            return pn;
+        }
+    }
+    return pn;
+}

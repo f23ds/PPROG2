@@ -24,13 +24,16 @@ void _free_points_array(Point **p, long n)
     free(p);
 }
 
-Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cmp_ele)
+
+Status test_complete(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cmp_ele)
 {
     BSTree *tree = NULL;
     long i, n, x, y;
-    Point **p, *minSol, *maxSol, *min, *max, *ct = NULL, *cf = NULL;
+    Point **p, *minSol, *maxSol, *min, *max, *ct = NULL, *cf = NULL, *cn=NULL, *cl=NULL, *pi1=NULL, *pi2=NULL;
     char s;
-    Bool contains = FALSE;
+    Bool contains=TRUE;
+   /* Bool contains = FALSE;*/
+    Status st=OK;
 
     fscanf(f, "%ld", &n);
     if (n < 0)
@@ -46,8 +49,8 @@ Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cm
     /* Reservamos memoria para el array de puntos */
     p = (Point **)malloc(n * sizeof(Point *));
 
-    /* Creamos los puntos para el test de tree_contains */
-    ct = point_new(2, 2, BARRIER);
+    /* Creamos los puntos para el test de tree_remove */
+    ct = point_new(6, 5, BARRIER);
     if (!ct)
     {
         _free_points_array(p, n);
@@ -55,7 +58,7 @@ Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cm
         return ERROR;
     }
 
-    cf = point_new(23, 13, BARRIER);
+    cf = point_new(3, 2, BARRIER);
     if (!cf)
     {
         _free_points_array(p, n);
@@ -64,6 +67,52 @@ Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cm
         return ERROR;
     }
 
+    cn = point_new(8, 3, BARRIER);
+    if (!cn)
+    {
+        _free_points_array(p, n);
+        point_free(ct);
+        point_free(cf);
+        tree_destroy(tree);
+        return ERROR;
+    }
+    
+    cl = point_new(5, 5, BARRIER);
+    if (!cl)
+    {
+        _free_points_array(p, n);
+        point_free(ct);
+        point_free(cf);
+        point_free(cn);
+        tree_destroy(tree);
+        return ERROR;
+    }
+    
+    pi1 = point_new(2, 2, BARRIER);
+    if (!pi1)
+    {
+        _free_points_array(p, n);
+        point_free(ct);
+        point_free(cf);
+        point_free(cn);
+        point_free(cl);
+        tree_destroy(tree);
+        return ERROR;
+    }
+    
+     pi2 = point_new(23, 13, BARRIER);
+    if (!pi2)
+    {
+        _free_points_array(p, n);
+        point_free(ct);
+        point_free(cf);
+        point_free(cn);
+        point_free(cl);
+        point_free(pi1);
+        tree_destroy(tree);
+        return ERROR;
+    }
+    
     tree = tree_init(print_ele, cmp_ele);
 
     if (tree == NULL)
@@ -71,6 +120,10 @@ Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cm
         fprintf(salida, "Error en la reserva de memoria del árbol.\n");
         point_free(ct);
         point_free(cf);
+        point_free(cn);
+        point_free(cl);
+        point_free(pi1);
+        point_free(pi2);
         free(p);
         return ERROR;
     }
@@ -118,12 +171,13 @@ Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cm
     print_ele(stdout, maxSol);
     fprintf(stdout, "Obtained: ");
     print_ele(stdout, max);
-
+    
+    
     fprintf(stdout, "-------------------------------------------------------\n");
-    fprintf(stdout, "TEST TREE_CONTAINS: \n");
-    contains = tree_contains(tree, (Point *)ct);
+    fprintf(stdout, "TEST TREE_CONTAINS: \n\n");
+    contains = tree_contains(tree, (Point *)pi1);
     // TODO: EL ERROR ESTÁ EN QUE LA RAÍZ DEL ÁRBOL ES NULA PERO NO TENGO NI IDEA DE POR QUÉ
-    fprintf(stdout, "TEST 1: [(2, 2): +]\n");
+    fprintf(stdout, "TEST 1: [(2, 2): +] (PUNTO CONTENIDO):\n");
     fprintf(stdout, "Expected: TRUE\n");
     if (contains == TRUE)
     {
@@ -134,8 +188,8 @@ Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cm
         fprintf(stdout, "Obtained: FALSE\n");
     }
 
-    contains = tree_contains(tree, (Point *)cf);
-    fprintf(stdout, "TEST 1: [(23, 13): +]\n");
+    contains = tree_contains(tree, (Point *)pi2);
+    fprintf(stdout, "TEST 2: [(23, 13): +] (PUNTO NO CONTENIDO):\n");
     fprintf(stdout, "Expected: FALSE\n");
     if (contains == TRUE)
     {
@@ -146,13 +200,86 @@ Status test(FILE *f, FILE *salida, P_tree_ele_print print_ele, P_tree_ele_cmp cm
         fprintf(stdout, "Obtained: FALSE\n");
     }
 
+    fprintf(stdout, "-------------------------------------------------------\n");
+    fprintf(stdout, "TEST TREE_REMOVE: \n");
+    
+    fprintf(stdout, "\n");
+    st = tree_remove(tree, (Point *)cn);
+    fprintf(stdout, "TEST 1: nodo no contenido en árbol\n");
+    fprintf(stdout, "Expected: ERROR\n");
+    if (st == ERROR)
+    {
+        fprintf(stdout, "Obtained: ERROR\n");
+    }
+    else
+    {
+        fprintf(stdout, "Obtained: OK\n");
+    }
+
+    fprintf(stdout, "\n");
+    fprintf(stdout, "TEST 2: eliminación punto [(6,5) : +] (NODO SIN HIJOS):\n");
+    fprintf(stdout, "Initial tree (in order): \n");
+    tree_inOrder(stdout, tree);
+    st = tree_remove(tree, (Point *)ct);
+    if (st == ERROR)
+    {
+        fprintf(stdout, "Error en la eliminación del punto [(6,5) : +]\n");
+    }
+    else
+    {
+        fprintf(stdout, "Obtained:\n");
+        tree_inOrder(stdout, tree);
+    }
+    
+    fprintf(stdout, "\n");
+    fprintf(stdout, "TEST 3: eliminación punto [(3,2) : +] (NODO CON DOS HIJOS):\n");
+    fprintf(stdout, "Initial tree (in order):\n");
+    tree_inOrder(stdout, tree);
+    st = tree_remove(tree, (Point *)cf);
+    if (st == ERROR)
+    {
+        fprintf(stdout, "Error en la eliminación del punto [(3,2) : +]\n");
+    }
+    else
+    {
+        fprintf(stdout, "Obtained:\n");
+        tree_inOrder(stdout, tree);
+    }
+    
+    fprintf(stdout, "\n");
+    fprintf(stdout, "TEST 4: eliminación punto [(5,5) : +] (NODO CON UN HIJO A LA IZQUIERDA):\n");
+    fprintf(stdout, "Initial tree (in order): \n");
+    tree_inOrder(stdout, tree);
+    st = tree_remove(tree, (Point *)cl);
+    if (st == ERROR)
+    {
+        fprintf(stdout, "Error en la eliminación del punto [(3,2) : +]\n");
+    }
+    else
+    {
+        fprintf(stdout, "Obtained:\n");
+        tree_inOrder(stdout, tree);
+    }
+    
+    
+    fprintf(stdout, "-------------------------------------------------------\n");
+    
+    fprintf(stdout, "Liberando recursos...\n");
+
     /* Liberamos los recursos utilizados */
     _free_points_array(p, n);
     point_free(minSol);
     point_free(maxSol);
     point_free(ct);
     point_free(cf);
+    point_free(cn);
+    point_free(cl);
+    point_free(pi1);
+    point_free(pi2);
     tree_destroy(tree);
+    
+    fprintf(stdout, "Recursos liberados.\n");
+    fprintf(stdout, "FIN EJECUCIÓN DEL PROGRAMA DE PRUEBAS\n");
     return OK;
 }
 
@@ -174,11 +301,13 @@ int main(int argc, char **argv)
     if (!pf)
         return -1;
 
-    st = test(pf, stdout, point_print, point_cmpEuDistance);
+
+    
+     st = test_complete(pf, stdout, point_print, point_cmpEuDistance);
 
     if (st == ERROR)
     {
-        fprintf(stdout, "Error en la ejecución del programa.");
+        fprintf(stdout, "Error en la ejecución de la eliminación de un nodo.");
         return -1;
     }
 
